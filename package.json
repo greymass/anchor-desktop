@@ -1,0 +1,57 @@
+{
+  "name": "anchor-desktop",
+  "license": "MIT",
+  "engines": {
+    "node": ">=v16.13",
+    "npm": ">=8.1"
+  },
+  "main": "packages/main/dist/index.cjs",
+  "scripts": {
+    "build": "npm run build:main && npm run build:preload && npm run build:renderer",
+    "build:main": "cd ./packages/main && vite build",
+    "build:preload": "cd ./packages/preload && vite build",
+    "build:renderer": "cd ./packages/renderer && vite build",
+    "coverage": "vitest run --coverage",
+    "dev": "node scripts/watch.js",
+    "format": "npm run lint && npm run pretty",
+    "lint": "eslint . --ext js,ts,svelte",
+    "package": "cross-env MODE=production npm run build && electron-builder build --config .electron-builder.config.js --dir --config.asar=false",
+    "pretty": "prettier --check './packages/**/*.{css,html,js,json,svelte,ts}'",
+    "pretty:fix": "prettier --write './packages/**/*.{css,html,js,json,svelte,ts}'",
+    "test": "npm run test:main && npm run test:preload && npm run test:renderer && npm run test:e2e",
+    "test:e2e": "npm run build && vitest run",
+    "test:main": "vitest run -r packages/main --passWithNoTests",
+    "test:preload": "vitest run -r packages/preload --passWithNoTests",
+    "test:renderer": "vitest run -r packages/renderer --passWithNoTests",
+    "typecheck:main": "tsc --noEmit -p packages/main/tsconfig.json",
+    "typecheck:preload": "tsc --noEmit -p packages/preload/tsconfig.json",
+    "typecheck:renderer": "svelte-check --tsconfig packages/renderer/tsconfig.json",
+    "typecheck": "npm run typecheck:main && npm run typecheck:preload && npm run typecheck:renderer"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^1.0.0-next.43",
+    "@tsconfig/svelte": "^3.0.0",
+    "@typescript-eslint/eslint-plugin": "5.23.0",
+    "@typescript-eslint/parser": "^5.23.0",
+    "c8": "^7.11.2",
+    "cross-env": "^7.0.3",
+    "electron": "^18.2.0",
+    "electron-builder": "^23.0.3",
+    "electron-devtools-installer": "^3.2.0",
+    "eslint": "8.15.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-svelte3": "^4.0.0",
+    "jsdom": "^19.0.0",
+    "prettier": "^2.6.2",
+    "prettier-plugin-svelte": "^2.7.0",
+    "svelte": "^3.48.0",
+    "svelte-check": "^2.7.0",
+    "svelte-preprocess": "^4.10.6",
+    "typescript": "^4.6.4",
+    "vite": "^2.9.8",
+    "vitest": "^0.12.2"
+  },
+  "dependencies": {
+    "electron-updater": "^5.0.1"
+  }
+}
