@@ -30,12 +30,11 @@
   },
   "main": "packages/core/dist/index.cjs",
   "scripts": {
-    "build": "npm run build:core && npm run build:main && npm run build:preload && npm run build:signer && npm run build:tray",
+    "build": "npm run build:core && npm run build:main && npm run build:preload && npm run build:signer",
     "build:core": "cd ./packages/core && vite build",
     "build:main": "cd ./packages/main && vite build",
     "build:preload": "cd ./packages/preload && vite build",
     "build:signer": "cd ./packages/signer && vite build",
-    "build:tray": "cd ./packages/tray && vite build",
     "bump": "bump package.json",
     "coverage": "vitest run --coverage",
     "dev": "node build/dev/watch.js",
