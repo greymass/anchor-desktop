@@ -4,6 +4,9 @@ dist
 *.local
 thumbs.db
 coverage
+release
 
+.env
 .vscode
 .eslintcache
+embedded.provisionprofile
