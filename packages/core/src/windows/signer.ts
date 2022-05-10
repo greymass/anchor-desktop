@@ -1,6 +1,7 @@
 import {BrowserWindow} from 'electron'
 import {join} from 'path'
 import {URL} from 'url'
+import {log} from '~/modules/log'
 
 let instance: BrowserWindow | undefined = undefined
 
@@ -62,10 +63,12 @@ async function createWindow() {
  */
 export async function createSignerWindow() {
     if (instance === undefined) {
+        log.info('Creating signer window')
         instance = await createWindow()
     }
 
     if (instance.isMinimized()) {
+        log.info('Restoring signer window')
         instance.restore()
     }
 

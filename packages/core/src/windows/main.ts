@@ -1,6 +1,7 @@
 import {ipcMain, BrowserWindow} from 'electron'
 import {join} from 'path'
 import {URL} from 'url'
+import {log} from '~/modules/log'
 
 let instance: BrowserWindow | undefined = undefined
 
@@ -55,10 +56,12 @@ async function createWindow() {
  */
 export async function createMainWindow() {
     if (instance === undefined) {
+        log.info('Creating main window')
         instance = await createWindow()
     }
 
     if (instance.isMinimized()) {
+        log.info('Restoring main window')
         instance.restore()
     }
 
