@@ -87,7 +87,7 @@ module.exports = {
             },
         ],
         'no-mixed-spaces-and-tabs': ['error', 'smart-tabs'],
-        'spaced-comment': [2, 'always'],
+        'spaced-comment': [2, 'always', {markers: ['/']}],
         'space-before-blocks': ['error', 'always'],
         'space-before-function-paren': 'off',
         'prefer-template': 'error',
