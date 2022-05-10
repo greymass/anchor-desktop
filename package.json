@@ -36,7 +36,7 @@
     "build:renderer": "cd ./packages/renderer && vite build",
     "bump": "bump package.json",
     "coverage": "vitest run --coverage",
-    "dev": "node scripts/watch.js",
+    "dev": "node build/dev/watch.js",
     "format": "npm run lint && npm run pretty",
     "lint": "eslint . --ext js,ts,svelte",
     "package": "cross-env MODE=production npm run build && electron-builder build --config .electron-builder.config.js --dir --config.asar=false",
@@ -50,7 +50,8 @@
     "typecheck:main": "tsc --noEmit -p packages/main/tsconfig.json",
     "typecheck:preload": "tsc --noEmit -p packages/preload/tsconfig.json",
     "typecheck:renderer": "svelte-check --tsconfig packages/renderer/tsconfig.json",
-    "typecheck": "npm run typecheck:main && npm run typecheck:preload && npm run typecheck:renderer"
+    "typecheck": "npm run typecheck:main && npm run typecheck:preload && npm run typecheck:renderer",
+    "vendors": "node build/dev/vendors.js"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^1.0.0-next.43",
