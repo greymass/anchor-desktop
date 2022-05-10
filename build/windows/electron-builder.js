@@ -1,4 +1,4 @@
-const common = require('../common/electron-builder.js')
+import common from '../common/electron-builder'
 
 /**
  * @type {import('electron-builder').Configuration}

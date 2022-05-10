@@ -1,5 +1,7 @@
-require('dotenv').config()
-const {notarize} = require('electron-notarize')
+import dotenv from 'dotenv'
+import {notarize} from 'electron-notarize'
+
+dotenv.config()
 
 exports.default = async function notarizing(context) {
     const {electronPlatformName, appOutDir} = context
