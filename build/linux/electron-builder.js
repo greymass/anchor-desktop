@@ -20,7 +20,7 @@ const config = {
             StartupNotify: 'false',
             Categories: 'Network;',
             MimeType:
-                'application/x-esr;x-scheme-handler/esr;application/x-anchor;x-scheme-handler/anchor;',
+                'application/x-esr;x-scheme-handler/esr;application/x-anchor;x-scheme-handler/anchor;application/x-anchorcreate;x-scheme-handler/anchorcreate;',
         },
         icon: 'build/assets/icons/png',
         target: [
@@ -30,6 +30,12 @@ const config = {
             },
             'AppImage',
         ],
+    },
+    appImage: {
+        desktop: {
+            MimeType:
+                'application/x-esr;x-scheme-handler/esr;application/x-anchor;x-scheme-handler/anchor;application/x-anchorcreate;x-scheme-handler/anchorcreate;',
+        },
     },
 }
 
