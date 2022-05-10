@@ -1,28 +1,10 @@
+const common = require('../common/electron-builder.js')
+
 /**
  * @type {import('electron-builder').Configuration}
  * @see https://www.electron.build/configuration/configuration
  */
 const config = {
-    appId: 'com.greymass.anchordesktop.release',
-    productName: 'Anchor Wallet',
-    afterSign: 'build/macos/notarize.js',
-    artifactName: '${os}-${name}-${version}-${arch}.${ext}',
-    asar: true,
-    directories: {
-        output: 'release',
-        buildResources: 'buildResources',
-    },
-    files: ['packages/**/dist/**'],
-    protocols: [
-        {
-            name: 'esr',
-            role: 'Viewer',
-            schemes: ['anchor', 'esr', 'anchorcreate'],
-        },
-    ],
-    publish: {
-        provider: 'github',
-    },
     mac: {
         category: 'public.app-category.finance',
         darkModeSupport: true,
@@ -53,4 +35,7 @@ const config = {
     },
 }
 
-module.exports = config
+module.exports = {
+    ...common,
+    ...config,
+}
