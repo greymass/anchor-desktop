@@ -1,6 +1,9 @@
 <script lang="ts">
     import logo from './assets/svelte.png'
     import Counter from './lib/Counter.svelte'
+    import {Name} from '@greymass/eosio'
+
+    const test = Name.from('teamgreymass')
 </script>
 
 <style>
@@ -49,7 +52,7 @@
 
 <main>
     <img src={logo} alt="Svelte Logo" />
-    <h1>Hello Electron!</h1>
+    <h1>Hello {test}!</h1>
 
     <Counter />
 
