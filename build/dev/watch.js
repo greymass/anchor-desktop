@@ -44,17 +44,26 @@ const getWatcher = ({name, configFile, writeBundle}) => {
  * @param {{config: {server: import("vite").ResolvedServerOptions}}} ResolvedServerOptions
  */
 const setupMainPackageWatcher = ({config: {server}}) => {
-    // Create VITE_DEV_SERVER_URL environment variable to pass it to the main process.
+    // Create VITE_MAIN_DEV_SERVER_URL environment variable to pass it to the main process.
     {
         const protocol = server.https ? 'https:' : 'http:'
         const host = server.host || 'localhost'
         const port = server.port // Vite searches for and occupies the first free port: 3000, 3001, 3002 and so on
         const path = '/'
-        process.env.VITE_DEV_SERVER_URL = `${protocol}//${host}:${port}${path}`
+        process.env.VITE_MAIN_DEV_SERVER_URL = `${protocol}//${host}:${port}${path}`
+    }
+
+    // Create VITE_SIGNER_DEV_SERVER_URL environment variable to pass it to the main process.
+    {
+        const protocol = server.https ? 'https:' : 'http:'
+        const host = server.host || 'localhost'
+        const port = server.port + 1 // Vite searches for and occupies the first free port: 3000, 3001, 3002 and so on
+        const path = '/'
+        process.env.VITE_SIGNER_DEV_SERVER_URL = `${protocol}//${host}:${port}${path}`
     }
 
     const logger = createLogger(LOG_LEVEL, {
-        prefix: '[main]',
+        prefix: '[core]',
     })
 
     /** @type {ChildProcessWithoutNullStreams | null} */
@@ -62,7 +71,7 @@ const setupMainPackageWatcher = ({config: {server}}) => {
 
     return getWatcher({
         name: 'reload-app-on-main-package-change',
-        configFile: 'packages/main/vite.config.js',
+        configFile: 'packages/core/vite.config.js',
         writeBundle() {
             if (spawnProcess !== null) {
                 spawnProcess.off('exit', process.exit)
@@ -113,10 +122,17 @@ const setupPreloadPackageWatcher = ({ws}) =>
     try {
         const viteDevServer = await createServer({
             ...sharedConfig,
-            configFile: 'packages/renderer/vite.config.js',
+            configFile: 'packages/main/vite.config.js',
         })
 
         await viteDevServer.listen()
+
+        const signerDevServer = await createServer({
+            ...sharedConfig,
+            configFile: 'packages/signer/vite.config.js',
+        })
+
+        await signerDevServer.listen()
 
         await setupPreloadPackageWatcher(viteDevServer)
         await setupMainPackageWatcher(viteDevServer)

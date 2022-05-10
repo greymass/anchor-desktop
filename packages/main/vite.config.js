@@ -1,6 +1,9 @@
-import {node} from '../../.electron-vendors.cache.json'
+/* eslint-env node */
+
+import {chrome} from '../../.electron-vendors.cache.json'
 import {join} from 'path'
 import {builtinModules} from 'module'
+import {svelte} from '@sveltejs/vite-plugin-svelte'
 
 const PACKAGE_ROOT = __dirname
 
@@ -11,34 +14,33 @@ const PACKAGE_ROOT = __dirname
 const config = {
     mode: process.env.MODE,
     root: PACKAGE_ROOT,
-    envDir: process.cwd(),
     resolve: {
         alias: {
             '~/': `${join(PACKAGE_ROOT, 'src')}/`,
+            '$/': `${join(PACKAGE_ROOT, '../stores')}/`,
+        },
+    },
+    plugins: [svelte()],
+    base: '',
+    server: {
+        fs: {
+            strict: true,
         },
     },
     build: {
-        sourcemap: 'inline',
-        target: `node${node}`,
+        sourcemap: true,
+        target: `chrome${chrome}`,
         outDir: 'dist',
         assetsDir: '.',
-        minify: process.env.MODE !== 'development',
-        lib: {
-            entry: 'src/index.ts',
-            formats: ['cjs'],
-        },
         rollupOptions: {
-            external: [
-                'electron',
-                'electron-devtools-installer',
-                ...builtinModules.flatMap((p) => [p, `node:${p}`]),
-            ],
-            output: {
-                entryFileNames: '[name].cjs',
-            },
+            input: join(PACKAGE_ROOT, 'index.html'),
+            external: [...builtinModules.flatMap((p) => [p, `node:${p}`])],
         },
         emptyOutDir: true,
         brotliSize: false,
+    },
+    test: {
+        environment: 'jsdom',
     },
 }
 

@@ -1,7 +1,8 @@
 <script lang="ts">
-    let count = 0
+    import {isLoading} from '$/loading'
+
     const increment = () => {
-        count += 1
+        isLoading.set(!$isLoading)
     }
 </script>
 
@@ -30,5 +31,5 @@
 </style>
 
 <button on:click={increment}>
-    Clicks: {count}
+    Clicks: {$isLoading}
 </button>

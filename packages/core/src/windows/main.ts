@@ -1,13 +1,16 @@
-import {BrowserWindow} from 'electron'
+import {ipcMain, BrowserWindow} from 'electron'
 import {join} from 'path'
 import {URL} from 'url'
+
+let instance: BrowserWindow | undefined = undefined
 
 async function createWindow() {
     const browserWindow = new BrowserWindow({
         show: false,
         webPreferences: {
-            webviewTag: false,
+            nodeIntegration: true,
             preload: join(__dirname, '../../preload/dist/index.cjs'),
+            webviewTag: false,
         },
     })
 
@@ -28,14 +31,21 @@ async function createWindow() {
     /**
      * URL for main window.
      * Vite dev server for development.
-     * `file://../renderer/index.html` for production and test
+     * `file://../main/index.html` for production and test
      */
     const pageUrl =
-        import.meta.env.DEV && import.meta.env.VITE_DEV_SERVER_URL !== undefined
-            ? import.meta.env.VITE_DEV_SERVER_URL
-            : new URL('../renderer/dist/index.html', `file://${__dirname}`).toString()
+        import.meta.env.DEV && import.meta.env.VITE_MAIN_DEV_SERVER_URL !== undefined
+            ? import.meta.env.VITE_MAIN_DEV_SERVER_URL
+            : new URL('../main/dist/index.html', `file://${__dirname}`).toString()
 
     await browserWindow.loadURL(pageUrl)
+
+    /**
+     * Dereference once window has closed
+     */
+    browserWindow.on('closed', () => {
+        instance = undefined
+    })
 
     return browserWindow
 }
@@ -43,16 +53,14 @@ async function createWindow() {
 /**
  * Restore existing BrowserWindow or Create new BrowserWindow
  */
-export async function restoreOrCreateWindow() {
-    let window = BrowserWindow.getAllWindows().find((w) => !w.isDestroyed())
-
-    if (window === undefined) {
-        window = await createWindow()
+export async function createMainWindow() {
+    if (instance === undefined) {
+        instance = await createWindow()
     }
 
-    if (window.isMinimized()) {
-        window.restore()
+    if (instance.isMinimized()) {
+        instance.restore()
     }
 
-    window.focus()
+    instance.focus()
 }

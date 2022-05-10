@@ -2,7 +2,8 @@
     "extends": "@tsconfig/svelte/tsconfig.json",
     "compilerOptions": {
         "paths": {
-            "~/*": ["./src/*"]
+            "~/*": ["./src/*"],
+            "$/*": ["../stores/*"]
         },
         "target": "esnext",
         "useDefineForClassFields": true,
