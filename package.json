@@ -1,6 +1,29 @@
 {
   "name": "anchor-desktop",
+  "productName": "Anchor Wallet",
+  "version": "2.0.0-beta.1",
+  "description": "Anchor is a security and privacy focused open-source digital wallet for all EOSIO-based networks.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/greymass/anchor-desktop.git"
+  },
+  "author": {
+    "name": "Greymass",
+    "email": "anchor@greymass.com",
+    "url": "https://github.com/greymass"
+  },
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/greymass/anchor-desktop/issues"
+  },
+  "keywords": [
+    "anchor",
+    "eosio",
+    "esr",
+    "eosio-signing-request",
+    "wallet"
+  ],
+  "homepage": "https://greymass.com/anchor",
   "engines": {
     "node": ">=v16.13",
     "npm": ">=8.1"
@@ -11,6 +34,7 @@
     "build:main": "cd ./packages/main && vite build",
     "build:preload": "cd ./packages/preload && vite build",
     "build:renderer": "cd ./packages/renderer && vite build",
+    "bump": "bump package.json",
     "coverage": "vitest run --coverage",
     "dev": "node scripts/watch.js",
     "format": "npm run lint && npm run pretty",
@@ -48,6 +72,7 @@
     "svelte-check": "^2.7.0",
     "svelte-preprocess": "^4.10.6",
     "typescript": "^4.6.4",
+    "version-bump-prompt": "^6.1.0",
     "vite": "^2.9.8",
     "vitest": "^0.12.2"
   },
