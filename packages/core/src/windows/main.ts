@@ -1,4 +1,4 @@
-import {ipcMain, BrowserWindow} from 'electron'
+import {BrowserWindow} from 'electron'
 import {join} from 'path'
 import {URL} from 'url'
 import {log} from '~/modules/log'
