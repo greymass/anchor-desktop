@@ -6,7 +6,7 @@ import {exposeInMainWorld} from './exposeInMainWorld'
 // Takes in and mutates a store from the backend
 export async function getStore(store: Writable<any>, name: string) {
     // Retrieve the value of the store from the backend
-    const result = await ipcRenderer.invoke('STORE_FETCH', name)
+    const result = await ipcRenderer.invoke('STORE_GET', name)
     // Set the value of the store to what was returned
     store.set(result)
     // Setup listener that future STORE_SYNC calls can use to update the value

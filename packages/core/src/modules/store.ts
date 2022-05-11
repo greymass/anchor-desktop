@@ -7,9 +7,9 @@ import {log} from './log'
 //      could be persisted to disk/etc later
 const data: Map<string, any> = new Map([['isLoading', true]])
 
-ipcMain.handle('STORE_FETCH', async (event: Electron.IpcMainInvokeEvent, name: any) => {
-    if (data.has(name)) {
-        return data.get(name)
+ipcMain.handle('STORE_GET', async (event: Electron.IpcMainInvokeEvent, key: any) => {
+    if (data.has(key)) {
+        return data.get(key)
     }
     return undefined
 })
