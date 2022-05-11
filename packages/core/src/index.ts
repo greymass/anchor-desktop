@@ -4,6 +4,7 @@ import {createMainWindow} from '~/windows/main'
 import {createSignerWindow} from '~/windows/signer'
 import {enableHandler} from '~/modules/handler'
 import {log} from '~/modules/log'
+import '~/modules/store'
 
 const lock = process.mas || app.requestSingleInstanceLock()
 

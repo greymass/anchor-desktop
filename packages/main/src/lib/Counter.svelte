@@ -1,7 +1,20 @@
 <script lang="ts">
-    import {isLoading} from '$/loading'
+    import {writable} from 'svelte/store'
+    import type {Writable} from 'svelte/store'
+    import {onMount} from 'svelte'
 
-    const increment = () => {
+    // Default writable store
+    let isLoading: Writable<boolean> = writable(false)
+
+    onMount(async () => {
+        // Call getStore and pass in the writable store as a reference
+        await window.getStore(isLoading, 'isLoading')
+        // Subscribe to isLoading, and call setStore on change
+        isLoading.subscribe((value) => window.setStore('isLoading', value))
+    })
+
+    async function onclick() {
+        // Toggle the value to show changes
         isLoading.set(!$isLoading)
     }
 </script>
@@ -30,6 +43,4 @@
     }
 </style>
 
-<button on:click={increment}>
-    Clicks: {$isLoading}
-</button>
+<button on:click={onclick}> Toggle Value ({$isLoading}) </button>

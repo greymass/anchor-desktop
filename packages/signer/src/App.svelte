@@ -1,8 +1,15 @@
 <script lang="ts">
-    import {Name} from '@greymass/eosio'
-    import {isLoading} from '$/loading'
+    import {writable} from 'svelte/store'
+    import type {Writable} from 'svelte/store'
+    import {onMount} from 'svelte'
 
-    const test = Name.from('teamgreymass')
+    // Default writable store
+    let example: Writable<boolean> = writable(true)
+
+    onMount(async () => {
+        // Call getStore and pass in the writable store as a reference
+        await window?.getStore(example, 'isLoading')
+    })
 </script>
 
 <style>
@@ -28,6 +35,6 @@
 </style>
 
 <main>
-    <h1>Sign transactions for {test}!</h1>
-    <p>isLoading: {$isLoading}</p>
+    <h1>Signing Window</h1>
+    <p>isLoading: {$example}</p>
 </main>
