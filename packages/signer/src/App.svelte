@@ -36,5 +36,5 @@
 
 <main>
     <h1>Signing Window</h1>
-    <p>isLoading: {$example}</p>
+    <p>isLoading: {$isLoading}</p>
 </main>
