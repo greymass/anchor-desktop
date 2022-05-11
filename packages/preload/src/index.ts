@@ -2,6 +2,6 @@
  * @module preload
  */
 
-import './stores'
+import './anchor'
 import './nodeCrypto'
 import './versions'

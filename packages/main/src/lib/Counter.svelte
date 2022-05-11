@@ -3,14 +3,12 @@
     import type {Writable} from 'svelte/store'
     import {onMount} from 'svelte'
 
-    // Default writable store
+    // Default value
     let isLoading: Writable<boolean> = writable(false)
 
     onMount(async () => {
-        // Call getStore and pass in the writable store as a reference
-        await window.getStore(isLoading, 'isLoading')
-        // Subscribe to isLoading, and call setStore on change
-        isLoading.subscribe((value) => window.setStore('isLoading', value))
+        // Call getStore and pass in the writable store as a reference along with the key for storage
+        await anchor.storage.get(isLoading, 'isLoading')
     })
 
     async function onclick() {
