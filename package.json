@@ -52,6 +52,7 @@
     "test:main": "vitest run -r packages/main --passWithNoTests",
     "test:preload": "vitest run -r packages/preload --passWithNoTests",
     "test:signer": "vitest run -r packages/signer --passWithNoTests",
+    "test:stores": "vitest run -r packages/stores",
     "typecheck:core": "tsc --noEmit -p packages/core/tsconfig.json",
     "typecheck:main": "svelte-check --tsconfig packages/main/tsconfig.json",
     "typecheck:preload": "tsc --noEmit -p packages/preload/tsconfig.json",

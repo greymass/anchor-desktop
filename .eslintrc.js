@@ -96,5 +96,6 @@ module.exports = {
         'eol-last': ['error', 'always'],
         'template-curly-spacing': ['error', 'never'],
         'no-multiple-empty-lines': 'off',
+        '@typescript-eslint/no-explicit-any': ['off'],
     },
 }
