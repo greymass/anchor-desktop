@@ -10,9 +10,6 @@ export class Writable<T> {
     key
     store
 
-    /**
-     * Like svelte/store's readable but initial value is optional and start notifier can be async and throw.
-     */
     constructor(value: any)
     constructor(value: any, key?: string)
     constructor(value: any, start?: StartStopNotifier<T> | undefined, key?: string)
@@ -28,7 +25,6 @@ export class Writable<T> {
             key = typeof args[2] === 'string' ? args[2] : undefined
         }
         this.key = key
-        console.log(start)
         if (isCore(value)) {
             this.store = _writable(toRaw(value), start)
         } else {
