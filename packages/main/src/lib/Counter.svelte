@@ -1,8 +1,8 @@
 <script lang="ts">
-    import {isLoading} from '$/loading'
+    import {sharedCounter} from '../../../stores'
 
     const increment = () => {
-        isLoading.set(!$isLoading)
+        sharedCounter.update((counter) => counter + 1)
     }
 </script>
 
@@ -31,5 +31,5 @@
 </style>
 
 <button on:click={increment}>
-    Clicks: {$isLoading}
+    Clicks: {$sharedCounter}
 </button>

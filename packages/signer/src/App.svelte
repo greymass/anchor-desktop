@@ -1,6 +1,6 @@
 <script lang="ts">
     import {Name} from '@greymass/eosio'
-    import {isLoading} from '$/loading'
+    import {sharedCounter} from '../../stores'
 
     const test = Name.from('teamgreymass')
 </script>
@@ -29,5 +29,6 @@
 
 <main>
     <h1>Sign transactions for {test}!</h1>
-    <p>isLoading: {$isLoading}</p>
+    <p>clicks: {$sharedCounter}</p>
+    <button on:click={() => ($sharedCounter -= 1)}> DECREMENT </button>
 </main>

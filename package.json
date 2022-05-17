@@ -87,6 +87,7 @@
     "vitest": "^0.12.2"
   },
   "dependencies": {
-    "electron-updater": "^5.0.1"
+    "electron-updater": "^5.0.1",
+    "svelte-channel-store": "https://github.com/greymass/svelte-channel-store#master"
   }
 }
