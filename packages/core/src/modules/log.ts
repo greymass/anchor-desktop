@@ -5,7 +5,8 @@ import electronLog from 'electron-log'
  */
 const cl = console.log.bind(console)
 console.log = (...args) => {
-    electronLog.info(args)
+    const logger = electronLog.scope('console')
+    logger.info(args)
     cl(...args)
 }
 
@@ -13,4 +14,3 @@ console.log = (...args) => {
  * Export log for other modules to use
  */
 export const log = electronLog
-log.info('modules/log: enable')

@@ -1,7 +1,9 @@
 import {BrowserWindow} from 'electron'
 import {join} from 'path'
 import {URL} from 'url'
-import {log} from '~/modules/log'
+import {log as logger} from '~/modules/log'
+
+const log = logger.scope('electron:signer')
 
 let instance: BrowserWindow | undefined = undefined
 

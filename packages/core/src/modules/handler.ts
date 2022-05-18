@@ -1,5 +1,7 @@
 import {app, protocol} from 'electron'
-import {log} from '~/modules/log'
+import {log as logger} from '~/modules/log'
+
+const log = logger.scope('handler')
 
 export const enableHandler = () => {
     log.info('modules/handler: enable')
