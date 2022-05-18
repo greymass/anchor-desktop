@@ -1,6 +1,6 @@
 {
   "name": "anchor-desktop",
-  "productName": "Anchor Wallet",
+  "productName": "Anchor",
   "version": "2.0.0-beta.1",
   "description": "Anchor is a security and privacy focused open-source digital wallet for all EOSIO-based networks.",
   "repository": {
