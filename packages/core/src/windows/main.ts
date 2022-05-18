@@ -2,6 +2,7 @@ import {BrowserWindow} from 'electron'
 import {join} from 'path'
 import {URL} from 'url'
 import {log as logger} from '~/modules/log'
+import {enableSocket} from '~/modules/socket'
 
 const log = logger.scope('electron:main')
 
@@ -15,6 +16,10 @@ async function createWindow() {
             preload: join(__dirname, '../../preload/dist/index.cjs'),
             webviewTag: false,
         },
+    })
+
+    browserWindow.webContents.on('dom-ready', () => {
+        enableSocket()
     })
 
     /**
