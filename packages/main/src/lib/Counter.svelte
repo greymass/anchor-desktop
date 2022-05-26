@@ -1,8 +1,10 @@
 <script lang="ts">
-    import {isLoading} from '$/loading'
+    import {Name} from '@greymass/eosio'
+
+    import {sharedName} from '../../../stores'
 
     const increment = () => {
-        isLoading.set(!$isLoading)
+        sharedName.set(Name.from('baz'))
     }
 </script>
 
@@ -30,6 +32,5 @@
     }
 </style>
 
-<button on:click={increment}>
-    Clicks: {$isLoading}
-</button>
+{$sharedName}
+<button on:click={increment}> Set to baz </button>

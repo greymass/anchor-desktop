@@ -5,6 +5,9 @@ import {createSignerWindow} from '~/windows/signer'
 import {enableHandler} from '~/modules/handler'
 import {log} from '~/modules/log'
 
+// setup shared svelte stores
+import '../../stores'
+
 const lock = process.mas || app.requestSingleInstanceLock()
 
 if (!lock) {
