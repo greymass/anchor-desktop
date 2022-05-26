@@ -1,8 +1,10 @@
 <script lang="ts">
-    import {sharedCounter} from '../../../stores'
+    import {Name} from '@greymass/eosio'
+
+    import {sharedName} from '../../../stores'
 
     const increment = () => {
-        sharedCounter.update((counter) => counter + 1)
+        sharedName.set(Name.from('baz'))
     }
 </script>
 
@@ -30,6 +32,5 @@
     }
 </style>
 
-<button on:click={increment}>
-    Clicks: {$sharedCounter}
-</button>
+{$sharedName}
+<button on:click={increment}> Set to baz </button>

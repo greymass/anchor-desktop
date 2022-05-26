@@ -1,6 +1,6 @@
 <script lang="ts">
     import {Name} from '@greymass/eosio'
-    import {sharedCounter} from '../../stores'
+    import {sharedName} from '../../stores'
 
     const test = Name.from('teamgreymass')
 </script>
@@ -29,6 +29,6 @@
 
 <main>
     <h1>Sign transactions for {test}!</h1>
-    <p>clicks: {$sharedCounter}</p>
-    <button on:click={() => ($sharedCounter -= 1)}> DECREMENT </button>
+    <p>Name: {$sharedName}</p>
+    <button on:click={() => sharedName.set(Name.from('bar'))}> Change to bar </button>
 </main>
