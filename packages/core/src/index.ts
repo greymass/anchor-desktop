@@ -5,6 +5,10 @@ import {createMainWindow} from '~/windows/main'
 import {createSignerWindow} from '~/windows/signer'
 import {enableHandler} from '~/modules/handler'
 import {log as logger} from '~/modules/log'
+// import {APIClient, FetchProvider, Name, Serializer} from '@greymass/eosio'
+// import fetch from 'node-fetch'
+// import {sharedInfo} from '../../stores'
+
 const log = logger.scope('core')
 
 // setup shared svelte stores
@@ -28,6 +32,12 @@ if (!lock) {
         enableHandler()
         createMainWindow()
         createSignerWindow()
+        // setInterval(async () => {
+        //     const provider = new FetchProvider('https://eos.greymass.com', {fetch})
+        //     const client = new APIClient({provider})
+        //     const result = await client.v1.chain.get_info()
+        //     sharedInfo.set(result)
+        // }, 2500)
     })
 }
 
