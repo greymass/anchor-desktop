@@ -8,7 +8,7 @@ import {log as logger} from '~/modules/log'
 const log = logger.scope('core')
 
 // setup shared svelte stores
-import '../../stores'
+import '@stores'
 
 const lock = process.mas || app.requestSingleInstanceLock()
 

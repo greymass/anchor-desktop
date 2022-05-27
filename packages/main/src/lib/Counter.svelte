@@ -1,7 +1,7 @@
 <script lang="ts">
     import {Name} from '@greymass/eosio'
 
-    import {sharedName} from '../../../stores'
+    import {sharedName} from '@stores'
 
     const increment = () => {
         sharedName.set(Name.from('baz'))
