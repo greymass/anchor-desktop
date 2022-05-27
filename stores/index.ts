@@ -1,6 +1,8 @@
-import {Writable, writable} from 'svelte/store'
+import {writable} from 'svelte/store'
+import type {Writable} from 'svelte/store'
 import {PrimaryStore, ReplicatedStore} from 'svelte-channel-store'
 import {Name, Serializer} from '@greymass/eosio'
+import {CoreRawValue} from '@types'
 
 const isMain = typeof window === 'undefined'
 
@@ -9,7 +11,7 @@ const options = {
     decode: (value) => (isRaw(value) ? toCore(value) : value),
 }
 
-function setupStore<T>(name: string, initialValue: T): Writable<T> {
+function setupStore<T>(name: string, initialValue?: T): Writable<T> {
     // TODO: we don't need to setup a new channel for each store. do a check and setup only once
     if (isMain) {
         const store = new PrimaryStore<T>(name, writable(initialValue), options)
@@ -34,13 +36,8 @@ function setupStore<T>(name: string, initialValue: T): Writable<T> {
     }
 }
 
-interface CoreType {
-    object: any
-    type: string
-}
-
 const isCore = (data: any) => data && data.constructor && data.constructor.abiName
-const toCore = ({object, type}: CoreType) => Serializer.decode({object, type})
+const toCore = ({object, type}: CoreRawValue) => Serializer.decode({object, type})
 
 const isRaw = (data: any) => data && data.type && data.object
 const toRaw = (data: any) => ({
@@ -49,3 +46,4 @@ const toRaw = (data: any) => ({
 })
 
 export const sharedName = setupStore('sharedName', Name.from('foo'))
+export const sharedInfo = setupStore('sharedInfo')
