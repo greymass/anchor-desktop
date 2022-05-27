@@ -60,8 +60,8 @@
     "vendors": "node build/dev/vendors.js"
   },
   "devDependencies": {
-    "@greymass/eosio": "^0.6.0",
     "@greymass/anchor-link-session-manager": "^0.3.1",
+    "@greymass/eosio": "^0.6.0",
     "@sveltejs/vite-plugin-svelte": "^1.0.0-next.43",
     "@tsconfig/svelte": "^3.0.0",
     "@typescript-eslint/eslint-plugin": "5.23.0",
@@ -78,6 +78,7 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-svelte3": "^4.0.0",
     "jsdom": "^19.0.0",
+    "node-fetch": "^3.2.4",
     "prettier": "^2.6.2",
     "prettier-plugin-svelte": "^2.7.0",
     "svelte": "^3.48.0",
