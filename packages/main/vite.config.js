@@ -1,9 +1,10 @@
 /* eslint-env node */
 
-import {chrome} from '../../.electron-vendors.cache.json'
 import {join} from 'path'
 import {builtinModules} from 'module'
 import {svelte} from '@sveltejs/vite-plugin-svelte'
+import {chrome} from '../../.electron-vendors.cache.json'
+import {getAliases} from '../shared/vite/aliases'
 
 const PACKAGE_ROOT = __dirname
 
@@ -15,10 +16,7 @@ const config = {
     mode: process.env.MODE,
     root: PACKAGE_ROOT,
     resolve: {
-        alias: {
-            '~/': `${join(PACKAGE_ROOT, 'src')}/`,
-            '$/': `${join(PACKAGE_ROOT, '../stores')}/`,
-        },
+        alias: getAliases(PACKAGE_ROOT),
     },
     plugins: [svelte()],
     base: '',

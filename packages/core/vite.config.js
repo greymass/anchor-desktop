@@ -1,9 +1,9 @@
-import {node} from '../../.electron-vendors.cache.json'
 import {join} from 'path'
 import {builtinModules} from 'module'
+import {node} from '../../.electron-vendors.cache.json'
+import {getAliases} from '../shared/vite/aliases'
 
 const PACKAGE_ROOT = __dirname
-const PROJECT_ROOT = `${join(PACKAGE_ROOT, '../../')}`
 
 /**
  * @type {import('vite').UserConfig}
@@ -17,13 +17,9 @@ const config = {
         alias: {
             /*
              * Common aliases to Anchor related folders
+             * See: packages/shared/vite/aliases.ts
              */
-            '~/': `${join(PACKAGE_ROOT, 'src')}/`,
-            '@assets/': `${join(PROJECT_ROOT, 'assets/')}`,
-            '@components/': `${join(PROJECT_ROOT, 'components/')}`,
-            '@packages/': `${join(PROJECT_ROOT, 'packages/')}`,
-            '@stores/': `${join(PROJECT_ROOT, 'packages/stores/')}`,
-            '@types/': `${join(PROJECT_ROOT, 'types/')}`,
+            ...getAliases(PACKAGE_ROOT),
             /*
              * The ws package for whatever reason believes it exists in a browser.
              * This forces it to load the nodejs version here in electron.
