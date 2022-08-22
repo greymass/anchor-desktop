@@ -28,6 +28,8 @@ if (!lock) {
 
     app.on('open-url', (e, url) => {
         log.debug(`open-url: ${url}`)
+        log.debug(`opening window ID: ${signerWindowId}`)
+        handleRequest(url, signerWindowId)
     })
 
     app.on('ready', async () => {
