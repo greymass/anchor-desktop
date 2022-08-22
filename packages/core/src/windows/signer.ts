@@ -1,4 +1,4 @@
-import {BrowserWindow} from 'electron'
+import {BrowserWindow, Menu} from 'electron'
 import {join} from 'path'
 import {URL} from 'url'
 import {log as logger} from '~/modules/log'
@@ -6,6 +6,8 @@ import {log as logger} from '~/modules/log'
 const log = logger.scope('electron:signer')
 
 let instance: BrowserWindow | undefined = undefined
+
+const isMac = () => process.platform === 'darwin'
 
 const config = {
     // alwaysOnTop: true,
@@ -54,6 +56,18 @@ async function createWindow() {
      */
     browserWindow.on('closed', () => {
         instance = undefined
+    })
+
+    /**
+     * On default close, hide instead
+     */
+    browserWindow.on('close', async (e) => {
+        /**
+         * If this is macOS, call hide on the main Anchor app to return to the original app
+         */
+        if (isMac() && Menu.sendActionToFirstResponder) {
+            Menu.sendActionToFirstResponder('hide:')
+        }
     })
 
     return browserWindow

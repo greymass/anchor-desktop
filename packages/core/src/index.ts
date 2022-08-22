@@ -7,7 +7,7 @@ import {handleRequest} from '~/modules/esr'
 import {enableHandler} from '~/modules/handler'
 import {log as logger} from '~/modules/log'
 import {createMainWindow} from '~/windows/main'
-import {createSignerWindow} from '~/windows/signer'
+import {disableHandler} from './modules/handler'
 // import {APIClient, FetchProvider, Name, Serializer} from '@greymass/eosio'
 // import fetch from 'node-fetch'
 // import {sharedInfo} from '../../stores'
@@ -15,8 +15,6 @@ import {createSignerWindow} from '~/windows/signer'
 const log = logger.scope('core')
 
 const lock = process.mas || app.requestSingleInstanceLock()
-
-let signerWindowId: number | undefined = undefined
 
 if (!lock) {
     log.debug('Prevented second instance of Anchor.')
@@ -28,21 +26,19 @@ if (!lock) {
 
     app.on('open-url', (e, url) => {
         log.debug(`open-url: ${url}`)
-        log.debug(`opening window ID: ${signerWindowId}`)
-        handleRequest(url, signerWindowId)
+        handleRequest(url)
     })
 
     app.on('ready', async () => {
+        /**
+         * Register URI scheme protocol handlers (esr, etc)
+         */
         enableHandler()
+
+        /**
+         * Launch the main window
+         */
         createMainWindow()
-        const signer = await createSignerWindow()
-        signerWindowId = signer.id
-        // setInterval(async () => {
-        //     const provider = new FetchProvider('https://eos.greymass.com', {fetch})
-        //     const client = new APIClient({provider})
-        //     const result = await client.v1.chain.get_info()
-        //     sharedInfo.set(result)
-        // }, 2500)
     })
 
     app.on('will-quit', () => {
