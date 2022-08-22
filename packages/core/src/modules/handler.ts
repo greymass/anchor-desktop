@@ -9,7 +9,17 @@ export const enableHandler = () => {
     uris.forEach((uri) => {
         app.setAsDefaultProtocolClient(uri)
         protocol.registerHttpProtocol(uri, (req, cb) => {
-            log.info('Registered esr: protocol', req, cb)
+            app.setAsDefaultProtocolClient(uri)
+            log.info(`Registered HTTP Protocol: ${uri}`, req, cb)
+        })
+    })
+}
+
+export const disableHandler = () => {
+    uris.forEach((uri) => {
+        protocol.registerHttpProtocol(uri, (req, cb) => {
+            app.removeAsDefaultProtocolClient(uri)
+            log.info(`Remove Default HTTP Protocol: ${uri}`, req, cb)
         })
     })
 }

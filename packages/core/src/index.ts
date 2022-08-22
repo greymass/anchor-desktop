@@ -44,6 +44,17 @@ if (!lock) {
         //     sharedInfo.set(result)
         // }, 2500)
     })
+
+    app.on('will-quit', () => {
+        log.info('will-quit')
+        /**
+         * Remove URI scheme protocol handlers in development
+         */
+        if (process.env.NODE_ENV === 'development') {
+            logger.debug('Disabling protocol handlers')
+            disableHandler()
+        }
+    })
 }
 
 /**
