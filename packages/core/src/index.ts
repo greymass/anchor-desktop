@@ -1,20 +1,22 @@
+// setup shared svelte stores
+import '@stores'
 import {app} from 'electron'
 
 import '~/modules/security'
-import {createMainWindow} from '~/windows/main'
-import {createSignerWindow} from '~/windows/signer'
+import {handleRequest} from '~/modules/esr'
 import {enableHandler} from '~/modules/handler'
 import {log as logger} from '~/modules/log'
+import {createMainWindow} from '~/windows/main'
+import {createSignerWindow} from '~/windows/signer'
 // import {APIClient, FetchProvider, Name, Serializer} from '@greymass/eosio'
 // import fetch from 'node-fetch'
 // import {sharedInfo} from '../../stores'
 
 const log = logger.scope('core')
 
-// setup shared svelte stores
-import '@stores'
-
 const lock = process.mas || app.requestSingleInstanceLock()
+
+let signerWindowId: number | undefined = undefined
 
 if (!lock) {
     log.debug('Prevented second instance of Anchor.')
@@ -31,7 +33,8 @@ if (!lock) {
     app.on('ready', async () => {
         enableHandler()
         createMainWindow()
-        createSignerWindow()
+        const signer = await createSignerWindow()
+        signerWindowId = signer.id
         // setInterval(async () => {
         //     const provider = new FetchProvider('https://eos.greymass.com', {fetch})
         //     const client = new APIClient({provider})

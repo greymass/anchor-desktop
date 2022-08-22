@@ -9,13 +9,12 @@ let instance: BrowserWindow | undefined = undefined
 
 const config = {
     // alwaysOnTop: true,
-    backgroundColor: '#f1f0ee',
     center: true,
     // frame: false,
     icon: join(__dirname, '../../../build/assets/icons/png/64x64.png'),
     nodeIntegration: true,
     resizable: true,
-    // show: false,
+    show: false,
     skipTaskbar: true,
     webPreferences: {
         webviewTag: false,
@@ -63,7 +62,7 @@ async function createWindow() {
 /**
  * Restore existing BrowserWindow or Create new BrowserWindow
  */
-export async function createSignerWindow() {
+export async function createSignerWindow(): Promise<BrowserWindow> {
     if (instance === undefined) {
         log.info('Creating signer window')
         instance = await createWindow()
@@ -74,5 +73,5 @@ export async function createSignerWindow() {
         instance.restore()
     }
 
-    instance.focus()
+    return instance
 }
