@@ -1,12 +1,19 @@
-import {derived, writable} from 'svelte/store'
-import type {Readable, Writable} from 'svelte/store'
+import {derived} from 'svelte/store'
+import type {Readable} from 'svelte/store'
 import {handlerProtocols} from '@types'
 
-import {Transaction, type ABIDef, type Checksum256} from '@greymass/eosio'
+import {
+    API,
+    Checksum256,
+    Serializer,
+    Transaction,
+    type ABIDef,
+    type NameType,
+} from '@greymass/eosio'
 import type {AbiMap, ResolvedTransaction} from 'eosio-signing-request'
 
-import {APIClient, PermissionLevel, TransactionHeader} from '@greymass/eosio'
-import {SigningRequest} from 'eosio-signing-request'
+import {APIClient, TransactionHeader} from '@greymass/eosio'
+import {IdentityV2, IdentityV3, SigningRequest, ResolvedSigningRequest} from 'eosio-signing-request'
 
 // import {ChainConfig, chainConfig} from '~/config'
 import {activeAuthority, currentChainId} from '@stores/debug'
@@ -40,14 +47,20 @@ export const currentRequest: Readable<SigningRequest | undefined> = derived(
     activeRequest,
     ($activeRequest) => {
         if ($activeRequest) {
+            // Convert all registered protocols with esr:
             const handlers = handlerProtocols.map((s: string) => `${s}:`).join('|')
             const regex = new RegExp(`(${handlers})`, 'gim')
             const payload = $activeRequest.replace(regex, 'esr:')
             const request = SigningRequest.from(payload, {zlib})
             return request
         }
+        return undefined
     }
 )
+
+export const isIdentityRequest = derived(currentRequest, ($currentRequest) => {
+    return $currentRequest && $currentRequest.isIdentity()
+})
 
 // Set the current chain based on the current request
 // currentRequest.subscribe((request) => {
@@ -66,23 +79,36 @@ export const abis: Readable<AbiMap | undefined> = derived(
         if ($currentRequest) {
             $currentRequest.fetchAbis($abiProvider).then((abis) => set(abis))
         }
+        return undefined
     }
 )
 
+export interface abiDefsType {
+    contract: NameType
+    abi: ABIDef
+}
+
 export const abiDefs = derived([abis], ([$abis]) => {
     if ($abis) {
-        // { contract: NameType; abi: ABIDef; }[]
-        const abiDefs: any = []
+        const abiDefs: abiDefsType[] = []
         $abis.forEach((value, key) => {
             abiDefs.push({
                 contract: key,
                 abi: value,
             })
         })
-
-        console.log(abiDefs)
         return abiDefs
     }
+})
+
+export const identityAbi = derived(currentRequest, ($currentRequest) => {
+    if ($currentRequest) {
+        const version = $currentRequest.version === 2 ? IdentityV2 : IdentityV3
+        const abi = Serializer.synthesize(version)
+        abi.actions = [{name: 'identity', type: 'identity', ricardian_contract: ''}]
+        return abi
+    }
+    return undefined
 })
 
 // Whether or not this is a multichain request
@@ -93,21 +119,52 @@ export const multichain: Readable<boolean> = derived(currentRequest, ($currentRe
     return false
 })
 
-// The current transaction resolved from the current request
-export const currentTransaction: Readable<Transaction> = derived(
-    [abis, abiDefs, activeAuthority, apiClient, currentRequest],
-    ([$abis, $abiDefs, $activeAuthority, $apiClient, $currentRequest], set) => {
-        if ($abis && $abiDefs && $apiClient && $currentRequest) {
+// The resolved transaction from the current request
+export const resolvedRequest: Readable<ResolvedSigningRequest> = derived(
+    [abis, activeAuthority, apiClient, currentRequest],
+    ([$abis, $activeAuthority, $apiClient, $currentRequest], set) => {
+        if ($abis && $activeAuthority && $apiClient && $currentRequest) {
             // If an active session exists, use it instead
             // if ($activeSession) {
             //     auth = $activeSession.auth
             // }
             // Resolve the transaction for the interface to display
-            $apiClient.v1.chain.get_info().then((info: any) => {
+            $apiClient.v1.chain.get_info().then((info: API.v1.GetInfoResponse) => {
                 const header: TransactionHeader = info.getTransactionHeader()
-                const resolved = $currentRequest.resolveTransaction($abis, $activeAuthority, header)
-                set(Transaction.from(resolved, $abiDefs))
+                const resolved = $currentRequest.resolve($abis, $activeAuthority, {
+                    ...header,
+                    chainId: Checksum256.from(
+                        '2a02a0053e5a8cf73a56ba0fda11e4d92e0238a4a2aa74fccf46d5a910746840'
+                    ),
+                })
+                set(resolved)
             })
+        }
+        return undefined
+    }
+)
+
+// The resolved transaction from the resolved request
+export const resolvedTransaction: Readable<ResolvedTransaction> = derived(
+    [resolvedRequest],
+    ([$resolvedRequest], set) => {
+        if ($resolvedRequest) {
+            set($resolvedRequest.resolvedTransaction)
+        }
+        return undefined
+    }
+)
+
+// The current transaction from the resolved request
+export const currentTransaction: Readable<Transaction> = derived(
+    [abiDefs, currentRequest, identityAbi, resolvedRequest],
+    ([$abiDefs, $currentRequest, $identityAbi, $resolvedRequest], set) => {
+        if ($abiDefs && $currentRequest && $identityAbi && $resolvedRequest) {
+            if ($resolvedRequest.request.isIdentity()) {
+                set(Transaction.from($resolvedRequest.resolvedTransaction, $identityAbi))
+            } else {
+                set(Transaction.from($resolvedRequest.resolvedTransaction, $abiDefs))
+            }
         }
         return undefined
     }

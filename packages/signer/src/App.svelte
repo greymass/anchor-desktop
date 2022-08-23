@@ -4,7 +4,7 @@
     import {activeRequest} from '@stores/request'
     import {account, authority, permission} from '@stores/signer'
 
-    import {currentTransaction, currentSigningDigest} from './request'
+    import {currentSigningDigest, resolvedTransaction} from './request'
 
     let signature: Signature | undefined = undefined
 
@@ -55,5 +55,5 @@
     <p>Payload: {$activeRequest}</p>
     <p>Signature: {JSON.stringify(signature || 'Not signed')}</p>
     <p>Resolved:</p>
-    <pre>{JSON.stringify($currentTransaction, null, '\t')}</pre>
+    <pre>{JSON.stringify($resolvedTransaction, null, '\t')}</pre>
 </main>
