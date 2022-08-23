@@ -1,16 +1,15 @@
 // setup shared svelte stores
 import '@stores'
-import {app} from 'electron'
+import {app, ipcMain} from 'electron'
 
 import '~/modules/security'
+import events from '@types/events'
+
 import {handleRequest} from '~/modules/esr'
-import {enableHandler} from '~/modules/handler'
+import {disableHandler, enableHandler} from '~/modules/handler'
+import {enableSigner} from '~/modules/signer'
 import {log as logger} from '~/modules/log'
 import {createMainWindow} from '~/windows/main'
-import {disableHandler} from './modules/handler'
-// import {APIClient, FetchProvider, Name, Serializer} from '@greymass/eosio'
-// import fetch from 'node-fetch'
-// import {sharedInfo} from '../../stores'
 
 const log = logger.scope('core')
 
@@ -21,19 +20,18 @@ if (!lock) {
     app.quit()
     process.exit(0)
 } else {
-    log.debug('Starting...')
-    log.debug('debug uri: esr://gmNgZACDVwahBaKXOu-tMrrLCBViYILSgjCBBUZ3JaRfXk1lAAoAAA')
-
-    app.on('open-url', (e, url) => {
-        log.debug(`open-url: ${url}`)
-        handleRequest(url)
-    })
+    log.info('Starting Anchor...')
 
     app.on('ready', async () => {
         /**
          * Register URI scheme protocol handlers (esr, etc)
          */
         enableHandler()
+
+        /**
+         * Enable IBC for background signer
+         */
+        enableSigner()
 
         /**
          * Launch the main window
@@ -47,9 +45,26 @@ if (!lock) {
          * Remove URI scheme protocol handlers in development
          */
         if (process.env.NODE_ENV === 'development') {
-            logger.debug('Disabling protocol handlers')
+            logger.debug('Disabling protocol handlers registered from development build.')
             disableHandler()
         }
+    })
+
+    /**
+     * Handle incoming open-url requests for URI scheme protocols
+     */
+    app.on('open-url', (e, url) => {
+        log.debug(`open-url: ${url}`)
+        handleRequest(url)
+    })
+
+    /**
+     * Mock transaction for testing purposes, triggable via renderer
+     */
+    ipcMain.on(events.SIGNING_REQUEST_EXAMPLE, () => {
+        handleRequest(
+            'esr://gmNgZGBY1mTC_MoglIGBIVzX5uxZRqAQGDBBaV2YAAQ0pMD4LK7-wSCaxzEvOSO_yEghODM9DygJAA'
+        )
     })
 }
 

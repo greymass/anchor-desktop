@@ -1,6 +1,8 @@
-import {BrowserWindow, Menu} from 'electron'
+import {BrowserWindow, ipcMain, Menu} from 'electron'
 import {join} from 'path'
 import {URL} from 'url'
+
+import events from '@types/events'
 import {log as logger} from '~/modules/log'
 
 const log = logger.scope('electron:signer')
@@ -37,6 +39,8 @@ async function createWindow() {
         if (import.meta.env.DEV) {
             browserWindow?.webContents.openDevTools({mode: 'detach'})
         }
+        // Register IPC event to close window on request cancel
+        ipcMain.on(events.SIGNING_REQUEST_CANCELLED, () => browserWindow.close())
     })
 
     /**
@@ -56,6 +60,7 @@ async function createWindow() {
      */
     browserWindow.on('closed', () => {
         instance = undefined
+        ipcMain.removeAllListeners(events.SIGNING_REQUEST_CANCELLED)
     })
 
     /**

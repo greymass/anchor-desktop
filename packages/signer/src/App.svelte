@@ -1,7 +1,24 @@
 <script lang="ts">
-    import {Name} from '@greymass/eosio'
-    import {sharedName} from '@stores'
-    const test = Name.from('teamgreymass')
+    import {Name, Signature} from '@greymass/eosio'
+
+    import {activeRequest} from '@stores/request'
+    import {account, authority, permission} from '@stores/signer'
+
+    import {currentTransaction, currentSigningDigest} from './request'
+
+    let signature: Signature | undefined = undefined
+
+    async function sign() {
+        // Set current account/permission stores
+        account.set(Name.from('corecorecore'))
+        permission.set(Name.from('active'))
+        // Get signature
+        signature = await window.anchor.signDigest($currentSigningDigest)
+    }
+
+    function close() {
+        window.anchor.cancelRequest()
+    }
 </script>
 
 <style>
@@ -24,10 +41,19 @@
         line-height: 1.1;
         margin: 2rem auto;
     }
+
+    pre {
+        text-align: left;
+    }
 </style>
 
 <main>
-    <h1>Sign transactions for {test}!</h1>
-    <p>Name: {$sharedName}</p>
-    <button on:click={() => sharedName.set(Name.from('bar'))}> Change to bar </button>
+    <h2>Sign transactions - {$account}@{$permission}</h2>
+    <p>{$authority}</p>
+    <button on:click={() => sign()}> Sign </button>
+    <button on:click={() => close()}> Close </button>
+    <p>Payload: {$activeRequest}</p>
+    <p>Signature: {JSON.stringify(signature || 'Not signed')}</p>
+    <p>Resolved:</p>
+    <pre>{JSON.stringify($currentTransaction, null, '\t')}</pre>
 </main>

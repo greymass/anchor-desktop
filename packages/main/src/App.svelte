@@ -1,17 +1,20 @@
 <script lang="ts">
-    import logo from './assets/svelte.png'
-    import Counter from './lib/Counter.svelte'
+    import logo from './assets/anchor-logo-lightmode.svg'
+
+    function test() {
+        window.anchor.exampleRequest()
+    }
 </script>
 
 <style>
     :root {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
-            Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        font-family: -apple-system, Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',
+            sans-serif;
     }
 
     main {
         text-align: center;
-        padding: 1em;
+        padding: 3em;
         margin: 0 auto;
     }
 
@@ -19,27 +22,11 @@
         height: 16rem;
         width: 16rem;
     }
-
-    h1 {
-        color: #ff3e00;
-        text-transform: uppercase;
-        font-size: 4rem;
-        font-weight: 100;
-        line-height: 1.1;
-        margin: 2rem auto;
-        max-width: 14rem;
-    }
-
-    @media (min-width: 480px) {
-        h1 {
-            max-width: none;
-        }
-    }
 </style>
 
 <main>
-    <img src={logo} alt="Svelte Logo" />
-    <h1>Main Window</h1>
-
-    <Counter />
+    <img src={logo} alt="Anchor Logo" />
+    <h2>Initiate a signing request</h2>
+    <p>Example request:</p>
+    <button on:click={test}>Prompt Request</button>
 </main>
