@@ -12,7 +12,7 @@ let instance: BrowserWindow | undefined = undefined
 const isMac = () => process.platform === 'darwin'
 
 const config = {
-    // alwaysOnTop: true,
+    alwaysOnTop: true,
     center: true,
     // frame: false,
     icon: join(__dirname, '../../../build/assets/icons/png/64x64.png'),
@@ -79,18 +79,16 @@ async function createWindow() {
 }
 
 /**
- * Restore existing BrowserWindow or Create new BrowserWindow
+ * Create a new BrowserWindow for the signer while closing any other windows
  */
 export async function createSignerWindow(): Promise<BrowserWindow> {
-    if (instance === undefined) {
-        log.info('Creating signer window')
-        instance = await createWindow()
+    log.info('Creating signer window')
+
+    if (instance) {
+        instance.close()
+        instance = undefined
     }
 
-    if (instance.isMinimized()) {
-        log.info('Restoring signer window')
-        instance.restore()
-    }
-
+    instance = await createWindow()
     return instance
 }
