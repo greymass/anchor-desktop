@@ -3,4 +3,5 @@ export interface CoreRawValue {
     type: string
 }
 
-export const handlerProtocols = ['esr', 'esr-anchor', 'anchor', 'anchorcreate']
+export const handlerProtocols = ['esr', 'esr-anchor', 'anchor']
+export const creationProtocols = ['anchorcreate']
