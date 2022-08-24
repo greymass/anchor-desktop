@@ -6,7 +6,7 @@ import '~/modules/security'
 import events from '@types/events'
 
 import {handleRequest} from '~/modules/esr'
-import {disableHandler, enableHandler} from '~/modules/handler'
+import {disableProtocolHandlers, enableProtocolHandlers} from '~/modules/protocols'
 import {enableSigner} from '~/modules/signer'
 import {log as logger} from '~/modules/log'
 import {createMainWindow} from '~/windows/main'
@@ -26,7 +26,7 @@ if (!lock) {
         /**
          * Register URI scheme protocol handlers (esr, etc)
          */
-        enableHandler()
+        enableProtocolHandlers()
 
         /**
          * Enable IBC for background signer
@@ -46,7 +46,7 @@ if (!lock) {
          */
         if (process.env.NODE_ENV === 'development') {
             logger.debug('Disabling protocol handlers registered from development build.')
-            disableHandler()
+            disableProtocolHandlers()
         }
     })
 

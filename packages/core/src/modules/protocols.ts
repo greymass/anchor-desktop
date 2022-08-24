@@ -1,10 +1,10 @@
 import {app, protocol} from 'electron'
 import {log as logger} from '~/modules/log'
-import {handlerProtocols} from '@types'
+import {protocolHandlers} from '@types'
 const log = logger.scope('handler')
 
-export const enableHandler = () => {
-    handlerProtocols.forEach((uri: string) => {
+export const enableProtocolHandlers = () => {
+    protocolHandlers.forEach((uri: string) => {
         app.setAsDefaultProtocolClient(uri)
         protocol.registerHttpProtocol(uri, (req, cb) => {
             app.setAsDefaultProtocolClient(uri)
@@ -13,8 +13,8 @@ export const enableHandler = () => {
     })
 }
 
-export const disableHandler = () => {
-    handlerProtocols.forEach((uri: string) => {
+export const disableProtocolHandlers = () => {
+    protocolHandlers.forEach((uri: string) => {
         protocol.registerHttpProtocol(uri, (req, cb) => {
             app.removeAsDefaultProtocolClient(uri)
             log.info(`Remove Default HTTP Protocol: ${uri}`, req, cb)
