@@ -188,10 +188,10 @@ export const currentTransaction: Readable<Transaction | undefined> = derived(
 )
 
 export const currentSigningDigest: Readable<Checksum256 | undefined> = derived(
-    [currentTransaction],
-    ([$currentTransaction]) => {
+    [currentChainId, currentTransaction],
+    ([$currentChainId, $currentTransaction]) => {
         if ($currentTransaction) {
-            return $currentTransaction.signingDigest(currentChainId)
+            return $currentTransaction.signingDigest($currentChainId)
         }
         return undefined
     }
