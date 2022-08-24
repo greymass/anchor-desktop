@@ -8,15 +8,17 @@ const log = logger.scope('electron:main')
 
 let instance: BrowserWindow | undefined = undefined
 
+const config = {
+    show: false,
+    webPreferences: {
+        nodeIntegration: true,
+        preload: join(__dirname, '../../preload/dist/index.cjs'),
+        webviewTag: false,
+    },
+}
+
 async function createWindow() {
-    const browserWindow = new BrowserWindow({
-        show: false,
-        webPreferences: {
-            nodeIntegration: true,
-            preload: join(__dirname, '../../preload/dist/index.cjs'),
-            webviewTag: false,
-        },
-    })
+    const browserWindow = new BrowserWindow(config)
 
     browserWindow.webContents.on('dom-ready', () => {
         enableSocket()

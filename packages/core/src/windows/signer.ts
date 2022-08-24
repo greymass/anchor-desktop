@@ -16,11 +16,11 @@ const config = {
     center: true,
     // frame: false,
     icon: join(__dirname, '../../../build/assets/icons/png/64x64.png'),
-    nodeIntegration: true,
     resizable: true,
     show: false,
     skipTaskbar: true,
     webPreferences: {
+        nodeIntegration: true,
         webviewTag: false,
         preload: join(__dirname, '../../preload/dist/index.cjs'),
     },
