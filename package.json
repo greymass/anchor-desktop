@@ -64,6 +64,7 @@
     "@greymass/eosio": "^0.6.0",
     "@sveltejs/vite-plugin-svelte": "^1.0.0-next.43",
     "@tsconfig/svelte": "^3.0.0",
+    "@types/pako": "^2.0.0",
     "@typescript-eslint/eslint-plugin": "5.23.0",
     "@typescript-eslint/parser": "^5.23.0",
     "c8": "^7.11.2",

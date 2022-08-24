@@ -3,6 +3,7 @@ import type {Readable} from 'svelte/store'
 import {handlerProtocols} from '@types'
 
 import {
+    ABI,
     API,
     Checksum256,
     Serializer,
@@ -10,7 +11,7 @@ import {
     type ABIDef,
     type NameType,
 } from '@greymass/eosio'
-import type {AbiMap, ResolvedTransaction} from 'eosio-signing-request'
+import type {AbiMap, AbiProvider, ResolvedTransaction} from 'eosio-signing-request'
 
 import {APIClient, TransactionHeader} from '@greymass/eosio'
 import {IdentityV2, IdentityV3, SigningRequest, ResolvedSigningRequest} from 'eosio-signing-request'
@@ -21,28 +22,7 @@ import {activeRequest} from '@stores/request'
 
 import zlib from 'pako'
 
-// The API client to fulfill the request
-export const apiClient: Readable<APIClient | undefined> = derived(
-    activeRequest,
-    ($activeRequest) => {
-        // if ($currentChain) {
-        return new APIClient({url: 'https://jungle3.greymass.com'})
-        // }
-    }
-)
-
-// The ABI Provider derived from the API Client to resolve requests
-export const abiProvider: Readable<any> = derived(apiClient, ($apiClient) => {
-    if ($apiClient) {
-        return {
-            getAbi: async (account: string) => {
-                return (await $apiClient.v1.chain.get_abi(account)).abi as ABIDef
-            },
-        }
-    }
-})
-
-// The currently loaded request, derived from the current route
+// The current request, derived from the request from the main process
 export const currentRequest: Readable<SigningRequest | undefined> = derived(
     activeRequest,
     ($activeRequest) => {
@@ -58,9 +38,52 @@ export const currentRequest: Readable<SigningRequest | undefined> = derived(
     }
 )
 
-export const isIdentityRequest = derived(currentRequest, ($currentRequest) => {
-    return $currentRequest && $currentRequest.isIdentity()
+// Boolean to indicate whether or not the request is an identity request
+export const isIdentityRequest: Readable<boolean> = derived(currentRequest, ($currentRequest) => {
+    if ($currentRequest) {
+        return $currentRequest.isIdentity()
+    }
+    return false
 })
+
+// Boolean to indicate whether this is a multi-chain request
+export const isMultiChain: Readable<boolean> = derived(currentRequest, ($currentRequest) => {
+    if ($currentRequest) {
+        return $currentRequest.isMultiChain()
+    }
+    return false
+})
+
+// The API client used with the request
+export const apiClient: Readable<APIClient | undefined> = derived(
+    [currentRequest, isMultiChain],
+    ([$currentRequest, $isMultiChain]) => {
+        if ($currentRequest) {
+            if ($isMultiChain) {
+                console.log('chainIds for multichain request', $currentRequest.getChainIds())
+            } else {
+                console.log('chainId for request', $currentRequest.getChainId())
+            }
+            // CHANGE: Use the proper blockchain based on the chainId
+            return new APIClient({url: 'https://jungle3.greymass.com'})
+        }
+    }
+)
+
+// The ABI Provider derived from the API Client to resolve requests
+export const abiProvider: Readable<AbiProvider | undefined> = derived(
+    apiClient,
+    ($apiClient): AbiProvider | undefined => {
+        if ($apiClient) {
+            return {
+                getAbi: async (account: NameType): Promise<ABIDef> => {
+                    return (await $apiClient.v1.chain.get_abi(account)).abi as ABIDef
+                },
+            }
+        }
+        return undefined
+    }
+)
 
 // Set the current chain based on the current request
 // currentRequest.subscribe((request) => {
@@ -88,20 +111,22 @@ export interface abiDefsType {
     abi: ABIDef
 }
 
-export const abiDefs = derived([abis], ([$abis]) => {
+// The ABIDefs for the current request
+export const abiDefs: Readable<abiDefsType[]> = derived([abis], ([$abis]) => {
+    const abiDefs: abiDefsType[] = []
     if ($abis) {
-        const abiDefs: abiDefsType[] = []
         $abis.forEach((value, key) => {
             abiDefs.push({
                 contract: key,
                 abi: value,
             })
         })
-        return abiDefs
     }
+    return abiDefs
 })
 
-export const identityAbi = derived(currentRequest, ($currentRequest) => {
+// The Identity Request ABI (not easily accessible from eosio-signing-request)
+export const identityAbi: Readable<ABI | undefined> = derived(currentRequest, ($currentRequest) => {
     if ($currentRequest) {
         const version = $currentRequest.version === 2 ? IdentityV2 : IdentityV3
         const abi = Serializer.synthesize(version)
@@ -111,16 +136,8 @@ export const identityAbi = derived(currentRequest, ($currentRequest) => {
     return undefined
 })
 
-// Whether or not this is a multichain request
-export const multichain: Readable<boolean> = derived(currentRequest, ($currentRequest) => {
-    if ($currentRequest) {
-        return $currentRequest.isMultiChain()
-    }
-    return false
-})
-
 // The resolved transaction from the current request
-export const resolvedRequest: Readable<ResolvedSigningRequest> = derived(
+export const resolvedRequest: Readable<ResolvedSigningRequest | undefined> = derived(
     [abis, activeAuthority, apiClient, currentRequest],
     ([$abis, $activeAuthority, $apiClient, $currentRequest], set) => {
         if ($abis && $activeAuthority && $apiClient && $currentRequest) {
@@ -145,18 +162,18 @@ export const resolvedRequest: Readable<ResolvedSigningRequest> = derived(
 )
 
 // The resolved transaction from the resolved request
-export const resolvedTransaction: Readable<ResolvedTransaction> = derived(
+export const resolvedTransaction: Readable<ResolvedTransaction | undefined> = derived(
     [resolvedRequest],
-    ([$resolvedRequest], set) => {
+    ([$resolvedRequest]) => {
         if ($resolvedRequest) {
-            set($resolvedRequest.resolvedTransaction)
+            return $resolvedRequest.resolvedTransaction
         }
         return undefined
     }
 )
 
 // The current transaction from the resolved request
-export const currentTransaction: Readable<Transaction> = derived(
+export const currentTransaction: Readable<Transaction | undefined> = derived(
     [abiDefs, currentRequest, identityAbi, resolvedRequest],
     ([$abiDefs, $currentRequest, $identityAbi, $resolvedRequest], set) => {
         if ($abiDefs && $currentRequest && $identityAbi && $resolvedRequest) {
