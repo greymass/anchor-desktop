@@ -1,36 +1,76 @@
-import {app} from 'electron'
-import '~/modules/security'
-import {createMainWindow} from '~/windows/main'
-import {createSignerWindow} from '~/windows/signer'
-import {enableHandler} from '~/modules/handler'
-import {log} from '~/modules/log'
-
 // setup shared svelte stores
-import '../../stores'
+import '@stores'
+import {app, ipcMain} from 'electron'
+
+import '~/modules/security'
+import events from '@types/events'
+
+import {handleRequest} from '~/modules/esr'
+import {disableProtocolHandlers, enableProtocolHandlers} from '~/modules/protocols'
+import {enableSigner} from '~/modules/signer'
+import {enableSocket} from '~/modules/socket'
+import {log as logger} from '~/modules/log'
+import {createMainWindow} from '~/windows/main'
+
+const log = logger.scope('core')
 
 const lock = process.mas || app.requestSingleInstanceLock()
 
 if (!lock) {
-    log.info('Preventing second instance')
+    log.debug('Prevented second instance of Anchor.')
     app.quit()
     process.exit(0)
 } else {
-    log.info('Starting...')
-    log.info('debug uri: esr://gmNgZACDVwahBaKXOu-tMrrLCBViYILSgjCBBUZ3JaRfXk1lAAoAAA')
-
-    app.on('second-instance', (e, argv) => {
-        log.info('second-instance starting', argv)
-    })
-
-    app.on('open-url', (e, url) => {
-        log.info(`open-url: ${url}`)
-    })
+    log.info('Starting Anchor...')
 
     app.on('ready', async () => {
-        log.info('Ready!')
-        enableHandler()
+        /**
+         * Register URI scheme protocol handlers (esr, etc)
+         */
+        enableProtocolHandlers()
+
+        /**
+         * Enable IBC for background signer
+         */
+        enableSigner()
+
+        /**
+         * Enable buoy socket for background communication
+         */
+        enableSocket()
+
+        /**
+         * Launch the main window
+         */
         createMainWindow()
-        createSignerWindow()
+    })
+
+    app.on('will-quit', () => {
+        log.info('will-quit')
+        /**
+         * Remove URI scheme protocol handlers in development
+         */
+        if (process.env.NODE_ENV === 'development') {
+            logger.debug('Disabling protocol handlers registered from development build.')
+            disableProtocolHandlers()
+        }
+    })
+
+    /**
+     * Handle incoming open-url requests for URI scheme protocols
+     */
+    app.on('open-url', (e, url) => {
+        log.debug(`open-url: ${url}`)
+        handleRequest(url)
+    })
+
+    /**
+     * Mock transaction for testing purposes, triggable via renderer
+     */
+    ipcMain.on(events.SIGNING_REQUEST_EXAMPLE, () => {
+        handleRequest(
+            'esr://gmNgZGBY1mTC_MoglIGBIVzX5uxZRqAQGDBBaV2YAAQ0pMD4LK7-wSCaxzEvOSO_yEghODM9DygJAA'
+        )
     })
 }
 

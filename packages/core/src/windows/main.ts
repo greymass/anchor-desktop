@@ -1,19 +1,26 @@
 import {BrowserWindow} from 'electron'
 import {join} from 'path'
 import {URL} from 'url'
-import {log} from '~/modules/log'
+import {log as logger} from '~/modules/log'
+import {enableSocket} from '~/modules/socket'
+
+const log = logger.scope('electron:main')
 
 let instance: BrowserWindow | undefined = undefined
 
+const config = {
+    show: false,
+    webPreferences: {
+        contextIsolation: true,
+        enableRemoteModule: false,
+        nodeIntegration: true,
+        preload: join(__dirname, '../../preload/dist/index.cjs'),
+        webviewTag: false,
+    },
+}
+
 async function createWindow() {
-    const browserWindow = new BrowserWindow({
-        show: false,
-        webPreferences: {
-            nodeIntegration: true,
-            preload: join(__dirname, '../../preload/dist/index.cjs'),
-            webviewTag: false,
-        },
-    })
+    const browserWindow = new BrowserWindow(config)
 
     /**
      * If you install `show: true` then it can cause issues when trying to close the window.

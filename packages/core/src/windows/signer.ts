@@ -1,21 +1,28 @@
-import {BrowserWindow} from 'electron'
+import {BrowserWindow, ipcMain, Menu} from 'electron'
 import {join} from 'path'
 import {URL} from 'url'
-import {log} from '~/modules/log'
+
+import events from '@types/events'
+import {log as logger} from '~/modules/log'
+
+const log = logger.scope('electron:signer')
 
 let instance: BrowserWindow | undefined = undefined
 
+const isMac = () => process.platform === 'darwin'
+
 const config = {
-    // alwaysOnTop: true,
-    backgroundColor: '#f1f0ee',
+    alwaysOnTop: true,
     center: true,
     // frame: false,
     icon: join(__dirname, '../../../build/assets/icons/png/64x64.png'),
-    nodeIntegration: true,
     resizable: true,
-    // show: false,
+    show: false,
     skipTaskbar: true,
     webPreferences: {
+        contextIsolation: true,
+        enableRemoteModule: false,
+        nodeIntegration: true,
         webviewTag: false,
         preload: join(__dirname, '../../preload/dist/index.cjs'),
     },
@@ -34,6 +41,8 @@ async function createWindow() {
         if (import.meta.env.DEV) {
             browserWindow?.webContents.openDevTools({mode: 'detach'})
         }
+        // Register IPC event to close window on request cancel
+        ipcMain.on(events.SIGNING_REQUEST_CANCELLED, () => browserWindow.close())
     })
 
     /**
@@ -53,24 +62,35 @@ async function createWindow() {
      */
     browserWindow.on('closed', () => {
         instance = undefined
+        ipcMain.removeAllListeners(events.SIGNING_REQUEST_CANCELLED)
+    })
+
+    /**
+     * On default close, hide instead
+     */
+    browserWindow.on('close', async (e) => {
+        /**
+         * If this is macOS, call hide on the main Anchor app to return to the original app
+         */
+        if (isMac() && Menu.sendActionToFirstResponder) {
+            Menu.sendActionToFirstResponder('hide:')
+        }
     })
 
     return browserWindow
 }
 
 /**
- * Restore existing BrowserWindow or Create new BrowserWindow
+ * Create a new BrowserWindow for the signer while closing any other windows
  */
-export async function createSignerWindow() {
-    if (instance === undefined) {
-        log.info('Creating signer window')
-        instance = await createWindow()
+export async function createSignerWindow(): Promise<BrowserWindow> {
+    log.info('Creating signer window')
+
+    if (instance) {
+        instance.close()
+        instance = undefined
     }
 
-    if (instance.isMinimized()) {
-        log.info('Restoring signer window')
-        instance.restore()
-    }
-
-    instance.focus()
+    instance = await createWindow()
+    return instance
 }

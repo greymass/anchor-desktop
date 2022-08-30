@@ -1,4 +1,5 @@
-import common from '../common/electron-builder'
+/* eslint @typescript-eslint/no-var-requires: "off" */
+const common = require('../common/electron-builder')
 
 /**
  * @type {import('electron-builder').Configuration}

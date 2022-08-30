@@ -1,5 +1,6 @@
 import {chrome} from '../../.electron-vendors.cache.json'
 import {builtinModules} from 'module'
+import {getAliases} from '../shared/vite/aliases'
 
 const PACKAGE_ROOT = __dirname
 
@@ -10,6 +11,9 @@ const PACKAGE_ROOT = __dirname
 const config = {
     mode: process.env.MODE,
     root: PACKAGE_ROOT,
+    resolve: {
+        alias: getAliases(PACKAGE_ROOT),
+    },
     envDir: process.cwd(),
     build: {
         sourcemap: 'inline',
