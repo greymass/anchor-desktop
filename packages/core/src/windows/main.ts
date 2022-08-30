@@ -11,6 +11,8 @@ let instance: BrowserWindow | undefined = undefined
 const config = {
     show: false,
     webPreferences: {
+        contextIsolation: true,
+        enableRemoteModule: false,
         nodeIntegration: true,
         preload: join(__dirname, '../../preload/dist/index.cjs'),
         webviewTag: false,
@@ -19,10 +21,6 @@ const config = {
 
 async function createWindow() {
     const browserWindow = new BrowserWindow(config)
-
-    browserWindow.webContents.on('dom-ready', () => {
-        enableSocket()
-    })
 
     /**
      * If you install `show: true` then it can cause issues when trying to close the window.

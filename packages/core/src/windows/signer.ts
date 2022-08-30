@@ -20,6 +20,8 @@ const config = {
     show: false,
     skipTaskbar: true,
     webPreferences: {
+        contextIsolation: true,
+        enableRemoteModule: false,
         nodeIntegration: true,
         webviewTag: false,
         preload: join(__dirname, '../../preload/dist/index.cjs'),

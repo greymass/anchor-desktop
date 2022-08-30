@@ -1,6 +1,6 @@
 import {derived} from 'svelte/store'
 import type {Readable} from 'svelte/store'
-import {handlerProtocols} from '@types'
+import {protocolHandlers} from '@types'
 
 import {
     ABI,
@@ -28,7 +28,7 @@ export const currentRequest: Readable<SigningRequest | undefined> = derived(
     ($activeRequest) => {
         if ($activeRequest) {
             // Convert all registered protocols with esr:
-            const handlers = handlerProtocols.map((s: string) => `${s}:`).join('|')
+            const handlers = protocolHandlers.map((s: string) => `${s}:`).join('|')
             const regex = new RegExp(`(${handlers})`, 'gim')
             const payload = $activeRequest.replace(regex, 'esr:')
             const request = SigningRequest.from(payload, {zlib})
@@ -56,14 +56,16 @@ export const isMultiChain: Readable<boolean> = derived(currentRequest, ($current
 
 // The API client used with the request
 export const apiClient: Readable<APIClient | undefined> = derived(
-    [currentRequest, isMultiChain],
-    ([$currentRequest, $isMultiChain]) => {
+    [currentRequest, isIdentityRequest, isMultiChain],
+    ([$currentRequest, $isIdentityRequest, $isMultiChain]) => {
         if ($currentRequest) {
-            if ($isMultiChain) {
-                console.log('chainIds for multichain request', $currentRequest.getChainIds())
-            } else {
-                console.log('chainId for request', $currentRequest.getChainId())
-            }
+            // if ($isIdentityRequest) {
+            //     console.log('identity request')
+            // } else if ($isMultiChain) {
+            //     console.log('chainIds for multichain request', $currentRequest.getChainIds())
+            // } else {
+            //     console.log('chainId for request', $currentRequest.getChainId())
+            // }
             // CHANGE: Use the proper blockchain based on the chainId
             return new APIClient({url: 'https://jungle3.greymass.com'})
         }

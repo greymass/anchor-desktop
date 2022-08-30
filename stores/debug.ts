@@ -1,6 +1,6 @@
 import {Checksum256, PermissionLevel, PrivateKey} from '@greymass/eosio'
 import {Writable} from 'svelte/store'
-import {setupWritable} from '@stores'
+import {setupWritable} from '@stores/setup'
 
 export const currentChainId: Writable<Checksum256> = setupWritable(
     'currentChainId',

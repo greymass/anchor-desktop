@@ -8,6 +8,7 @@ import events from '@types/events'
 import {handleRequest} from '~/modules/esr'
 import {disableProtocolHandlers, enableProtocolHandlers} from '~/modules/protocols'
 import {enableSigner} from '~/modules/signer'
+import {enableSocket} from '~/modules/socket'
 import {log as logger} from '~/modules/log'
 import {createMainWindow} from '~/windows/main'
 
@@ -32,6 +33,11 @@ if (!lock) {
          * Enable IBC for background signer
          */
         enableSigner()
+
+        /**
+         * Enable buoy socket for background communication
+         */
+        enableSocket()
 
         /**
          * Launch the main window

@@ -1,6 +1,6 @@
 import {Checksum256, Name, PermissionLevel, PermissionLevelType} from '@greymass/eosio'
 import {Readable} from 'svelte/store'
-import {setupDerived, setupWritable} from '@stores'
+import {setupDerived, setupWritable} from '@stores/setup'
 
 export const unlocked: Readable<boolean> = setupWritable('unlocked', false)
 

@@ -3,11 +3,15 @@
  */
 import {contextBridge, ipcRenderer} from 'electron'
 import {Checksum256} from '@greymass/eosio'
+import * as fs from 'fs'
+import * as path from 'path'
 
 import events from '@types/events'
 
 import './nodeCrypto'
 import './versions'
+import {sessions} from './sessions'
+import {signer} from './signer'
 
 // forward store port setup to main process
 window.addEventListener('message', (event) => {
@@ -16,8 +20,11 @@ window.addEventListener('message', (event) => {
     }
 })
 
-contextBridge.exposeInMainWorld('anchor', {
+export const anchor = {
     cancelRequest: () => ipcRenderer.send(events.SIGNING_REQUEST_CANCELLED),
     exampleRequest: () => ipcRenderer.send(events.SIGNING_REQUEST_EXAMPLE),
-    signDigest: (digest: Checksum256) => ipcRenderer.invoke(events.SIGN_DIGEST, digest),
-})
+    signer,
+    sessions,
+}
+
+contextBridge.exposeInMainWorld('anchor', anchor)
