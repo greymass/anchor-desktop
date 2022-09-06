@@ -1,10 +1,13 @@
 <script lang="ts">
-    import {Serializer} from '@greymass/eosio'
+    import {Serializer, type PublicKeyType} from '@greymass/eosio'
     import type {AnchorLinkSessionManagerSession} from '@greymass/anchor-link-session-manager'
 
     import logo from '@assets/anchor-logo-lightmode.svg'
     import {sessions} from '@stores/session'
     import {sharedNames} from '@stores'
+    import {privateKey} from '@stores/debug'
+    import {publicKeys} from '@stores/signer'
+    import {onMount} from 'svelte'
 
     function test() {
         window.anchor.exampleRequest()
@@ -12,6 +15,17 @@
 
     function removeSession(session: AnchorLinkSessionManagerSession) {
         window.anchor.sessions.remove(Serializer.objectify(session))
+    }
+
+    let key: string | undefined = String(privateKey)
+    function importPrivateKey(e) {
+        e.preventDefault()
+        window.anchor.signer.importPrivateKey(key)
+    }
+
+    function removeKey(key: PublicKeyType) {
+        console.log(key)
+        window.anchor.signer.removePublicKey(key)
     }
 </script>
 
@@ -49,6 +63,11 @@
     <p>Or trigger an example request:</p>
     <button on:click={test}>Prompt Request</button>
     <hr />
+    <form on:submit={importPrivateKey}>
+        <input autoFocus type="text" name="privateKey" bind:value={key} />
+        <button on:click={importPrivateKey}>Import Key</button>
+    </form>
+    <hr />
     {#if $sessions}
         <table>
             <thead>
@@ -69,6 +88,28 @@
             {:else}
                 <tr>
                     <td colspan="3">No active sessions.</td>
+                </tr>
+            {/each}
+        </table>
+    {/if}
+    <hr />
+    {#if $publicKeys}
+        <table>
+            <thead>
+                <tr>
+                    <th>Public key</th>
+                </tr>
+            </thead>
+            {#each $publicKeys as key}
+                <tr>
+                    <td>{key}</td>
+                    <td>
+                        <button on:click={() => removeKey(key)}>Remove</button>
+                    </td>
+                </tr>
+            {:else}
+                <tr>
+                    <td colspan="3">No keys available.</td>
                 </tr>
             {/each}
         </table>

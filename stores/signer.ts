@@ -1,4 +1,4 @@
-import {Checksum256, Name, PermissionLevel, PermissionLevelType} from '@greymass/eosio'
+import {Checksum256, Name, PermissionLevel, PublicKeyType} from '@greymass/eosio'
 import {Readable} from 'svelte/store'
 import {setupDerived, setupWritable} from '@stores/setup'
 
@@ -17,3 +17,5 @@ export const authority = setupDerived(
         return undefined
     }
 )
+
+export const publicKeys: Readable<PublicKeyType[]> = setupWritable('publicKeys', [])

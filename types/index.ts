@@ -1,4 +1,4 @@
-import {Checksum256Type, NameType, PublicKeyType} from '@greymass/eosio'
+import {Checksum256Type, NameType, PrivateKeyType, PublicKeyType} from '@greymass/eosio'
 
 export interface CoreRawValue {
     object: any
@@ -18,6 +18,12 @@ export interface SessionParams {
     permission: NameType
     publicKey: PublicKeyType
     name: string
+}
+
+export interface KeyStore {
+    hardwareKeys: Record<string, string>
+    publicKeys: PublicKeyType[]
+    privateKeys: PrivateKeyType[] | string
 }
 
 export const esrParams = ['bn', 'ex', 'rbn', 'req', 'rid', 'sa', 'sig', 'sp', 'tx']
