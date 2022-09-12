@@ -2,9 +2,6 @@
  * @module preload
  */
 import {contextBridge, ipcRenderer} from 'electron'
-import {Checksum256} from '@greymass/eosio'
-import * as fs from 'fs'
-import * as path from 'path'
 
 import events from '@types/events'
 
@@ -23,6 +20,7 @@ window.addEventListener('message', (event) => {
 export const anchor = {
     cancelRequest: () => ipcRenderer.send(events.SIGNING_REQUEST_CANCELLED),
     exampleRequest: () => ipcRenderer.send(events.SIGNING_REQUEST_EXAMPLE),
+    wipe: async (password: string) => ipcRenderer.invoke(events.ANCHOR_FACTORY_RESET, password),
     signer,
     sessions,
 }

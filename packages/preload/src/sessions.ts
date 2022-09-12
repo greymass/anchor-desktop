@@ -1,5 +1,4 @@
 import {ipcRenderer} from 'electron'
-import {AnchorLinkSessionManagerSession} from '@greymass/anchor-link-session-manager'
 
 import {IdentityRequestParams, SessionParams} from '@types'
 import events from '@types/events'
