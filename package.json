@@ -96,7 +96,6 @@
   },
   "dependencies": {
     "electron-updater": "^5.2.1",
-    "svelte-channel-store": "https://github.com/greymass/svelte-channel-store#master"
     "svelte-channel-store": "https://github.com/greymass/svelte-channel-store#master",
     "tinro": "^0.6.12"
   },
