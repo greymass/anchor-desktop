@@ -56,6 +56,7 @@ export function setupReadable<T>(name: string, initialValue?: T): Writable<T> {
 export function setupWritable<T>(name: string, initialValue?: T): Writable<T> {
     // TODO: we don't need to setup a new channel for each store. do a check and setup only once
     if (isMain) {
+        console.log('Setting up writable store in main process named:', name)
         const store = new PrimaryStore<T>(name, svelteWritable(initialValue), options)
         // eslint-disable-next-line @typescript-eslint/no-var-requires
         require('electron').ipcMain.on('store', (event, storeName) => {
@@ -70,6 +71,7 @@ export function setupWritable<T>(name: string, initialValue?: T): Writable<T> {
         })
         return store
     } else {
+        console.log('Setting up writable store in renderer process named:', name)
         const channel = new MessageChannel()
         const store = new ReplicatedStore<T>(name, svelteWritable(initialValue), options)
         store.attach(channel.port2)

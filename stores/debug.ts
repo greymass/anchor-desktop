@@ -18,3 +18,5 @@ export const activeAuthority: Writable<PermissionLevel> = setupWritable(
 export const privateKey: PrivateKey = PrivateKey.from(
     '5JW71y3njNNVf9fiGaufq8Up5XiGk68jZ5tYhKpy69yyU9cr7n9'
 )
+
+export const foo: Writable<string | undefined> = setupWritable('foo', undefined)

@@ -5,6 +5,7 @@
     import logo from '@assets/anchor-logo-lightmode.svg'
     import {sessions} from '@stores/session'
     import {sharedNames} from '@stores'
+    import {foo} from '@stores/debug'
 
     function test() {
         window.anchor.exampleRequest()
@@ -49,6 +50,7 @@
     <p>Or trigger an example request:</p>
     <button on:click={test}>Prompt Request</button>
     <hr />
+    <h1>foo: {$foo}</h1>
     {#if $sessions}
         <table>
             <thead>
