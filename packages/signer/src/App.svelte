@@ -6,6 +6,7 @@
     import {esrParams} from '@types'
     import {activeRequest} from '@stores/request'
     import {account, authority, permission} from '@stores/signer'
+    import {foo} from '@stores/debug'
 
     import {
         currentRequest,
@@ -171,6 +172,7 @@
 </style>
 
 <main>
+    <h1>foo: {$foo}</h1>
     <h2>Sign with {$authority}</h2>
     <button on:click={() => sign()}> Sign </button>
     <button on:click={() => close()}> Close </button>
