@@ -6,11 +6,6 @@
     import {sessions} from '@stores/session'
     import {sharedNames} from '@stores'
     import {foo} from '@stores/debug'
-    import {onMount} from 'svelte'
-
-    onMount(() => {
-        window.anchor.init()
-    })
 
     function test() {
         window.anchor.exampleRequest()
