@@ -2,7 +2,6 @@ import {BrowserWindow} from 'electron'
 import {join} from 'path'
 import {URL} from 'url'
 import {log as logger} from '~/modules/log'
-import {enableSocket} from '~/modules/socket'
 
 const log = logger.scope('electron:main')
 

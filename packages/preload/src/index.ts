@@ -23,6 +23,7 @@ window.addEventListener('message', (event) => {
 export const anchor = {
     cancelRequest: () => ipcRenderer.send(events.SIGNING_REQUEST_CANCELLED),
     exampleRequest: () => ipcRenderer.send(events.SIGNING_REQUEST_EXAMPLE),
+    init: () => ipcRenderer.send(events.ANCHOR_READY),
     signer,
     sessions,
 }

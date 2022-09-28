@@ -15,6 +15,7 @@ import {createMainWindow} from '~/windows/main'
 const log = logger.scope('core')
 
 const lock = process.mas || app.requestSingleInstanceLock()
+let modulesInitialized = false
 
 if (!lock) {
     log.debug('Prevented second instance of Anchor.')
@@ -25,22 +26,7 @@ if (!lock) {
 
     app.on('ready', async () => {
         /**
-         * Register URI scheme protocol handlers (esr, etc)
-         */
-        enableProtocolHandlers()
-
-        /**
-         * Enable IBC for background signer
-         */
-        enableSigner()
-
-        /**
-         * Enable buoy socket for background communication
-         */
-        enableSocket()
-
-        /**
-         * Launch the main window
+         * Launch the main window when app is ready
          */
         createMainWindow()
     })
@@ -71,6 +57,30 @@ if (!lock) {
         handleRequest(
             'esr://gmNgZGBY1mTC_MoglIGBIVzX5uxZRqAQGDBBaV2YAAQ0pMD4LK7-wSCaxzEvOSO_yEghODM9DygJAA'
         )
+    })
+
+    ipcMain.on(events.ANCHOR_READY, () => {
+        if (!modulesInitialized) {
+            log.debug('Initializing modules...')
+            /**
+             * Register URI scheme protocol handlers (esr, etc)
+             */
+            enableProtocolHandlers()
+
+            /**
+             * Enable IBC for background signer
+             */
+            enableSigner()
+
+            /**
+             * Enable buoy socket for background communication
+             */
+            enableSocket()
+
+            // Lock to prevent this from firing more than once
+            modulesInitialized = true
+            log.debug('Modules initialized!')
+        }
     })
 }
 

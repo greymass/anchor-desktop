@@ -88,6 +88,7 @@ export default class SessionManager {
 }
 
 export const enableSocket = () => {
+    log.debug('Registering IBC events')
     // Create new Session Manager
     const sHandler = new SessionManager()
     // Connect the session manager
