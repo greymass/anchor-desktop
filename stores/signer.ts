@@ -2,6 +2,7 @@ import {Checksum256, Name, PermissionLevel, PublicKeyType} from '@greymass/eosio
 import {Readable} from 'svelte/store'
 import {setupDerived, setupWritable} from '@stores/setup'
 
+export const hash: Readable<string> = setupWritable('hash', 'unset')
 export const initialized: Readable<boolean> = setupWritable('initialized', false)
 export const unlocked: Readable<boolean> = setupWritable('unlocked', false)
 

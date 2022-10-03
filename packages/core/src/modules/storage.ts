@@ -18,6 +18,11 @@ const migrations = {
 export class Storage {
     store: typeof Store
     constructor(options) {
+        // If in development, specify a special path
+        if (process.env.NODE_ENV === 'development') {
+            options.cwd = `${app.getPath('appData')}/anchor-desktop-dev`
+        }
+        // Initialize the store
         this.store = new Store({
             beforeEachMigration: (store, context) => {
                 log.info(`migrate from ${context.fromVersion} → ${context.toVersion}`)

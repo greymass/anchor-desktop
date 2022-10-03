@@ -5,13 +5,11 @@ import {KeyStore} from '@types'
 import events from '@types/events'
 
 import {privateKey} from '@stores/debug'
-import {initialized, publicKeys, unlocked} from '@stores/signer'
+import {hash, initialized, publicKeys, unlocked} from '@stores/signer'
 
 import {log as logger} from '~/modules/log'
 import {decrypt, encrypt} from '~/modules/encryption'
 import {storage} from '~/modules/storage'
-import {decrypt} from './encryption'
-import {Writable, writable} from 'svelte/store'
 
 const log = logger.scope('signer')
 
@@ -115,7 +113,6 @@ export function getInitializationState(): boolean {
 
 export function handleUnlockSigner(event: IpcMainInvokeEvent, password: string) {
     const valid = validatePassword(password)
-    log.debug('handleUnlockSigner', valid)
     if (valid) {
         // Update svelte store to indicate unlocked
         unlocked.set(true)
@@ -138,7 +135,6 @@ function decryptKeystore(keystore: unknown, password: string) {
 }
 
 export function validatePassword(password: string) {
-    log.debug('validatePassword')
     const {deviceId, hash} = storage.get()
     try {
         const decrypted = decrypt(hash, password, 100)
@@ -149,7 +145,6 @@ export function validatePassword(password: string) {
 }
 
 export function handleLockSigner() {
-    log.debug('handleLockSigner')
     signer.keys = []
     signer.password = undefined
     unlocked.set(false)
@@ -163,7 +158,6 @@ export function handleSetPassword(event: IpcMainInvokeEvent, password: string) {
 }
 
 function setNewPassword(password: string) {
-    log.debug('Initializing signer with password')
     const deviceId = storage.get('deviceId')
     const hash = encrypt(deviceId, password, 100)
     storage.set('hash', hash)
@@ -171,6 +165,13 @@ function setNewPassword(password: string) {
     initialized.set(true)
     unlocked.set(true)
     signer.password = password
+}
+
+export function loadSignerData() {
+    const store = storage.get('hash', 'not set')
+    hash.set(store)
+    initialized.set(getInitializationState())
+    publicKeys.set(getPublicKeys())
 }
 
 export const enableSigner = () => {
@@ -185,6 +186,5 @@ export const enableSigner = () => {
         validatePassword(password)
     )
     log.debug('Loading data into stores')
-    publicKeys.set(getPublicKeys())
-    initialized.set(getInitializationState())
+    loadSignerData()
 }

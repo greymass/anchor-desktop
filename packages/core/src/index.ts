@@ -5,12 +5,13 @@ import {app, ipcMain} from 'electron'
 import '~/modules/security'
 import events from '@types/events'
 
+import {enableAccounts} from '~/modules/accounts'
 import {handleRequest} from '~/modules/esr'
+import {log as logger} from '~/modules/log'
+import {createMainWindow} from '~/windows/main'
 import {disableProtocolHandlers, enableProtocolHandlers} from '~/modules/protocols'
 import {enableSigner} from '~/modules/signer'
 import {enableSocket} from '~/modules/socket'
-import {log as logger} from '~/modules/log'
-import {createMainWindow} from '~/windows/main'
 
 const log = logger.scope('core')
 
@@ -28,6 +29,11 @@ if (!lock) {
          * Register URI scheme protocol handlers (esr, etc)
          */
         enableProtocolHandlers()
+
+        /**
+         * Enable IBC for account storage
+         */
+        enableAccounts()
 
         /**
          * Enable IBC for background signer
