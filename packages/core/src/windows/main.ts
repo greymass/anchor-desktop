@@ -1,8 +1,7 @@
-import {BrowserWindow} from 'electron'
+import {BrowserWindow, ipcMain, ipcRenderer} from 'electron'
 import {join} from 'path'
 import {URL} from 'url'
 import {log as logger} from '~/modules/log'
-import {enableSocket} from '~/modules/socket'
 
 const log = logger.scope('electron:main')
 
@@ -30,7 +29,6 @@ async function createWindow() {
      */
     browserWindow.on('ready-to-show', () => {
         browserWindow?.show()
-
         if (import.meta.env.DEV) {
             browserWindow?.webContents.openDevTools({mode: 'detach'})
         }

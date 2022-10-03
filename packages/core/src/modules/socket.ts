@@ -36,7 +36,7 @@ export default class SessionManager {
         })
     }
     getConfig(): AnchorLinkSessionManagerStorage {
-        let config = storage.get('buoy')
+        let config = storage.get('connections')
         if (config) {
             log.debug('Using existing configuration:', config)
         } else {
@@ -47,6 +47,7 @@ export default class SessionManager {
                 requestKey: String(PrivateKey.generate('K1')),
             }
             log.debug('New configuration created:', config)
+            storage.set('connections', config)
         }
         return AnchorLinkSessionManagerStorage.unserialize(JSON.stringify(config))
     }
@@ -76,7 +77,7 @@ export default class SessionManager {
             onStorageUpdate(json: string) {
                 log.debug('Called onStorageUpdate', json, storage)
                 const data = JSON.parse(json)
-                storage.set('buoy', data)
+                storage.set('connections', data)
                 sessions.set(data.sessions)
             },
             onIncomingRequest(payload: string) {
