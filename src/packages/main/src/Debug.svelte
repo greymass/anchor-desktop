@@ -8,8 +8,8 @@
     import {privateKey} from '@stores/debug'
     import {initialized, publicKeys, unlocked} from '@stores/signer'
     import {onMount} from 'svelte'
-    import PasswordPrompt from '../../shared/components/prompt/password.svelte'
-    import ElevatePrompt from '../../shared/components/prompt/elevate.svelte'
+    import PasswordPrompt from '@shared/components/prompt/password.svelte'
+    import ElevatePrompt from '@shared/components/prompt/elevate.svelte'
 
     let password: string | undefined = undefined
 

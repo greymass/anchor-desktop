@@ -5,7 +5,7 @@
     import {privateKey} from '@stores/debug'
     import {publicKeys} from '@stores/signer'
 
-    import ElevatePrompt from '@packages/shared/components/prompt/elevate.svelte'
+    import ElevatePrompt from '@shared/components/prompt/elevate.svelte'
 
     let key: string | undefined = String(privateKey)
     let legacy: boolean = false

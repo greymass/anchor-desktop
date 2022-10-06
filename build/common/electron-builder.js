@@ -11,7 +11,7 @@ const common = {
         output: 'release',
         buildResources: 'buildResources',
     },
-    files: ['packages/**/dist/**'],
+    files: ['src/packages/**/dist/**'],
     protocols: [
         {
             name: 'esr',

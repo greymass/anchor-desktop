@@ -5,7 +5,7 @@
     import {publicKeys} from '@stores/signer'
     import type {Account} from '@types'
 
-    import ConfirmPrompt from '@packages/shared/components/prompt/confirm.svelte'
+    import ConfirmPrompt from '@shared/components/prompt/confirm.svelte'
 
     import AccountImport from '~/sections/accounts/import/index.svelte'
 

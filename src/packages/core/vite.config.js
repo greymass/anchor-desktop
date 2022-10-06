@@ -1,7 +1,7 @@
 import {join} from 'path'
 import {builtinModules} from 'module'
-import {node} from '../../.electron-vendors.cache.json'
-import {getAliases} from '../../build/vite/aliases'
+import {node} from '../../../.electron-vendors.cache.json'
+import {getAliases} from '../../../build/vite/aliases'
 
 const PACKAGE_ROOT = __dirname
 
@@ -17,14 +17,14 @@ const config = {
         alias: {
             /*
              * Common aliases to Anchor related folders
-             * See: packages/shared/vite/aliases.ts
+             * See: build/vite/aliases.ts
              */
             ...getAliases(PACKAGE_ROOT),
             /*
              * The ws package for whatever reason believes it exists in a browser.
              * This forces it to load the nodejs version here in electron.
              */
-            ws: `${join(PACKAGE_ROOT, '../../node_modules/ws/index.js')}`,
+            ws: `${join(PACKAGE_ROOT, '../../../node_modules/ws/index.js')}`,
         },
     },
     build: {
