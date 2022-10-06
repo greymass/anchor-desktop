@@ -1,6 +1,6 @@
 import {chrome} from '../../.electron-vendors.cache.json'
 import {builtinModules} from 'module'
-import {getAliases} from '../shared/vite/aliases'
+import {getAliases} from '../../build/vite/aliases'
 
 const PACKAGE_ROOT = __dirname
 

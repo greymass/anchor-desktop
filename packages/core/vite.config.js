@@ -1,7 +1,7 @@
 import {join} from 'path'
 import {builtinModules} from 'module'
 import {node} from '../../.electron-vendors.cache.json'
-import {getAliases} from '../shared/vite/aliases'
+import {getAliases} from '../../build/vite/aliases'
 
 const PACKAGE_ROOT = __dirname
 
