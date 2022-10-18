@@ -1,5 +1,5 @@
 <script lang="ts">
-    import PasswordPrompt from '../../../../shared/components/prompt/password.svelte'
+    import PasswordPrompt from '@shared/components/prompt/password.svelte'
 
     let password: string = ''
 

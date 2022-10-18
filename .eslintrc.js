@@ -33,7 +33,11 @@ module.exports = {
             processor: 'svelte3/svelte3',
         },
     ],
-    ignorePatterns: ['packages/preload/exposedInMainWorld.d.ts', 'node_modules/**', '**/dist/**'],
+    ignorePatterns: [
+        'src/packages/preload/exposedInMainWorld.d.ts',
+        'node_modules/**',
+        '**/dist/**',
+    ],
     rules: {
         'no-multi-spaces': [
             'error',

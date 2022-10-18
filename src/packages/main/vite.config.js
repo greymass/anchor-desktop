@@ -3,8 +3,8 @@
 import {join} from 'path'
 import {builtinModules} from 'module'
 import {svelte} from '@sveltejs/vite-plugin-svelte'
-import {chrome} from '../../.electron-vendors.cache.json'
-import {getAliases} from '../shared/vite/aliases'
+import {chrome} from '../../../.electron-vendors.cache.json'
+import {getAliases} from '../../../build/vite/aliases'
 
 const PACKAGE_ROOT = __dirname
 
