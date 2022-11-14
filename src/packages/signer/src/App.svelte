@@ -5,7 +5,7 @@
     import type {IdentityRequestParams} from '@types'
     import {esrParams} from '@types'
     import {activeRequest} from '@stores/request'
-    import {account, authority, permission} from '@stores/signer'
+    import {account, permission} from '@stores/signer'
 
     import {
         currentRequest,
@@ -171,7 +171,7 @@
 </style>
 
 <main>
-    <h2>Sign with {$authority}</h2>
+    <h2>Sign with {$account}</h2>
     <button on:click={() => sign()}> Sign </button>
     <button on:click={() => close()}> Close </button>
     <p>Payload: {$activeRequest}</p>

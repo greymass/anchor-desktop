@@ -11,6 +11,8 @@ export const publicKeys: Readable<PublicKeyType[]> = setupWritable('publicKeys',
 export const chainId: Readable<Checksum256 | undefined> = setupWritable('chainId', undefined)
 export const account: Readable<Name | undefined> = setupWritable('account', undefined)
 export const permission: Readable<Name | undefined> = setupWritable('permission', undefined)
+
+// TODO: The authority below is broken and needs to be fixed
 export const authority = setupDerived(
     'authority',
     [account, permission],
