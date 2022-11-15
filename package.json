@@ -57,7 +57,8 @@
     "typecheck:preload": "tsc --noEmit -p src/packages/preload/tsconfig.json",
     "typecheck:signer": "svelte-check --tsconfig src/packages/signer/tsconfig.json",
     "typecheck": "npm run typecheck:core && npm run typecheck:preload && npm run typecheck:main && typecheck:signer",
-    "vendors": "node build/dev/vendors.js"
+    "vendors": "node build/dev/vendors.js",
+    "generate-ricardian-html": "./scripts/generate-ricardian-html.sh > assets/ricardian-contracts/index.html"
   },
   "devDependencies": {
     "@greymass/anchor-link-session-manager": "^0.4.0-rc1",
