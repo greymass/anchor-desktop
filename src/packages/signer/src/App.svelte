@@ -6,8 +6,10 @@
     import {esrParams} from '@types'
     import {activeRequest} from '@stores/request'
     import {account, permission} from '@stores/signer'
+    import RicardianContract from './components/RicardianContract.svelte'
 
     import {
+        abis,
         currentRequest,
         currentSigningDigest,
         currentTransaction,
@@ -17,6 +19,8 @@
 
     let signature: Signature | undefined = undefined
     let transaction_id: string | undefined = undefined
+
+    $: console.log({ abis: $abis, currentTransaction: $currentTransaction })
 
     async function sign() {
         // Set current account/permission stores
@@ -142,6 +146,8 @@
     function close() {
         window.anchor.cancelRequest()
     }
+
+    $: console.log({ abis: $abis, account: $account})
 </script>
 
 <style>
@@ -174,6 +180,9 @@
     <h2>Sign with {$account}</h2>
     <button on:click={() => sign()}> Sign </button>
     <button on:click={() => close()}> Close </button>
+    {#if ($abis && $currentTransaction)}
+        <RicardianContract abis={$abis} transaction={$currentTransaction} />
+    {/if}
     <p>Payload: {$activeRequest}</p>
     <p>Signature: {JSON.stringify(signature || 'Not signed')}</p>
     <p>transaction_id: {transaction_id}</p>

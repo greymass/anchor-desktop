@@ -7,7 +7,7 @@
 
     import ConfirmPrompt from '@shared/components/prompt/confirm.svelte'
 
-    import AccountImport from '~/sections/accounts/import/index.svelte'
+    import AccountImport from '~/sections/accounts/import/index.html'
 
     function removeAccount(account: Account) {
         window.anchor.accounts.remove(account)
