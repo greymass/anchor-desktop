@@ -20,8 +20,6 @@
     let signature: Signature | undefined = undefined
     let transaction_id: string | undefined = undefined
 
-    $: console.log({ abis: $abis, currentTransaction: $currentTransaction })
-
     async function sign() {
         // Set current account/permission stores
         account.set(Name.from('corecorecore'))
@@ -146,8 +144,6 @@
     function close() {
         window.anchor.cancelRequest()
     }
-
-    $: console.log({ abis: $abis, account: $account})
 </script>
 
 <style>
@@ -180,8 +176,10 @@
     <h2>Sign with {$account}</h2>
     <button on:click={() => sign()}> Sign </button>
     <button on:click={() => close()}> Close </button>
-    {#if ($abis && $currentTransaction)}
-        <RicardianContract abis={$abis} transaction={$currentTransaction} />
+    {#if ($abis && $currentTransaction?.actions)}
+        {#each $currentTransaction?.actions as action}
+            <RicardianContract action={action} abi={$abis.get(String(action.account))} transaction={$currentTransaction} />
+        {/each}
     {/if}
     <p>Payload: {$activeRequest}</p>
     <p>Signature: {JSON.stringify(signature || 'Not signed')}</p>
