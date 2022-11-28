@@ -1,5 +1,5 @@
 <script lang="ts">
-    import ricardianTemplate from '../../../../../assets/ricardian-contracts/index.html?raw'
+    import ricardianTemplate from '../../../../../build/assets/ricardian-contracts/index.html?raw'
 
     export let action
     export let abi
@@ -60,5 +60,5 @@
 <div>
     <h3>{`${action.account} - ${action.name}`}</h3>
 
-    <iframe srcdoc={ricardianTemplateWithScript} sandbox="allow-scripts" />
+    <iframe title="" srcdoc={ricardianTemplateWithScript} sandbox="allow-scripts" />
 </div>
