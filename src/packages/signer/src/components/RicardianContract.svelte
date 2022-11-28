@@ -11,13 +11,15 @@
 
     const relevantTransaction = {
         ...transaction,
-        actions: [{
-            ...action,
-            data: action.decodeData(abi)
-        }],
+        actions: [
+            {
+                ...action,
+                data: action.decodeData(abi),
+            },
+        ],
     }
 
-    const ricardianScript =  `
+    const ricardianScript = `
       var contractContainer = document.getElementById("contract-container");
       var factory = new ContractTemplateToolkit.RicardianContractFactory();
 
@@ -35,26 +37,28 @@
       contractContainer.innerHTML = html;
     `
 
-    const ricardianTemplateParts = ricardianTemplate.split("/body>")
+    const ricardianTemplateParts = ricardianTemplate.split('/body>')
 
-    const ricardianTemplateWithScript = `${ricardianTemplateParts[0]}/body>\n<script>${ricardianScript}\n<` + `/script>\n${ricardianTemplateParts[1]}`
+    const ricardianTemplateWithScript =
+        `${ricardianTemplateParts[0]}/body>\n<script>${ricardianScript}\n<` +
+        `/script>\n${ricardianTemplateParts[1]}`
 </script>
 
 <style lang="scss">
-  div {
-    width: 100%;
+    div {
+        width: 100%;
 
-    iframe {
-      max-width: 500px;
-      width: 80%;
-      margin: 0 auto 20px auto;
-      min-height: 300px;
+        iframe {
+            max-width: 500px;
+            width: 80%;
+            margin: 0 auto 20px auto;
+            min-height: 300px;
+        }
     }
-  }
 </style>
 
 <div>
-    <h3> {`${action.account} - ${action.name}`} </h3>
+    <h3>{`${action.account} - ${action.name}`}</h3>
 
     <iframe srcdoc={ricardianTemplateWithScript} sandbox="allow-scripts" />
 </div>
