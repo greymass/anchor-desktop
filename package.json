@@ -39,6 +39,7 @@
     "coverage": "vitest run --coverage",
     "dev": "node build/dev/watch.js",
     "format": "npm run lint && npm run pretty",
+    "generate-ricardian-html": "./build/common/generate-ricardian-html.sh > src/shared/assets/ricardian-contracts/index.html",
     "lint": "eslint . --ext js,ts,svelte",
     "package": "cross-env MODE=production npm run build && electron-builder build --config .electron-builder.config.js --dir --config.asar=false",
     "package:linux": "npm run build && electron-builder --linux --publish never -c build/linux/electron-builder.js",

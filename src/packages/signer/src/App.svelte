@@ -7,7 +7,10 @@
     import {activeRequest} from '@stores/request'
     import {account, permission} from '@stores/signer'
 
+    import RicardianContract from '~/components/RicardianContract.svelte'
+
     import {
+        abis,
         currentRequest,
         currentSigningDigest,
         currentTransaction,
@@ -174,6 +177,15 @@
     <h2>Sign with {$account}</h2>
     <button on:click={() => sign()}> Sign </button>
     <button on:click={() => close()}> Close </button>
+    {#if $abis && $currentTransaction?.actions}
+        {#each $currentTransaction?.actions as action}
+            <RicardianContract
+                {action}
+                abi={$abis.get(String(action.account))}
+                transaction={$currentTransaction}
+            />
+        {/each}
+    {/if}
     <p>Payload: {$activeRequest}</p>
     <p>Signature: {JSON.stringify(signature || 'Not signed')}</p>
     <p>transaction_id: {transaction_id}</p>
