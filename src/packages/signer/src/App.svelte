@@ -178,10 +178,11 @@
     <button on:click={() => sign()}> Sign </button>
     <button on:click={() => close()}> Close </button>
     {#if $abis && $currentTransaction?.actions}
-        {#each $currentTransaction?.actions as action}
+        {#each $currentTransaction?.actions as action, index}
             <RicardianContract
                 {action}
                 abi={$abis.get(String(action.account))}
+                {index}
                 transaction={$currentTransaction}
             />
         {/each}
