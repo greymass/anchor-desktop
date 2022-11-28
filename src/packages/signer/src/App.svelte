@@ -6,6 +6,7 @@
     import {esrParams} from '@types'
     import {activeRequest} from '@stores/request'
     import {account, permission} from '@stores/signer'
+
     import RicardianContract from '~/components/RicardianContract.svelte'
 
     import {
