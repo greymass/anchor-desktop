@@ -1,5 +1,5 @@
 <script lang="ts">
-    import ricardianTemplate from '../../../../../build/assets/ricardian-contracts/index.html?raw'
+    import ricardianTemplate from '@assets/ricardian-contracts/index.html?raw'
 
     export let action
     export let abi

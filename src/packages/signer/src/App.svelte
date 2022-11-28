@@ -6,7 +6,7 @@
     import {esrParams} from '@types'
     import {activeRequest} from '@stores/request'
     import {account, permission} from '@stores/signer'
-    import RicardianContract from './components/RicardianContract.svelte'
+    import RicardianContract from '~/components/RicardianContract.svelte'
 
     import {
         abis,
@@ -176,9 +176,13 @@
     <h2>Sign with {$account}</h2>
     <button on:click={() => sign()}> Sign </button>
     <button on:click={() => close()}> Close </button>
-    {#if ($abis && $currentTransaction?.actions)}
+    {#if $abis && $currentTransaction?.actions}
         {#each $currentTransaction?.actions as action}
-            <RicardianContract action={action} abi={$abis.get(String(action.account))} transaction={$currentTransaction} />
+            <RicardianContract
+                {action}
+                abi={$abis.get(String(action.account))}
+                transaction={$currentTransaction}
+            />
         {/each}
     {/if}
     <p>Payload: {$activeRequest}</p>
