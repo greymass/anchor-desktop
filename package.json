@@ -45,7 +45,6 @@
     "package:linux": "npm run build && electron-builder --linux --publish never -c build/linux/electron-builder.js",
     "package:mac": "npm run build && electron-builder --publish never -c build/macos/electron-builder.js",
     "package:win": "npm run build && electron-builder --win --x64 --ia32 --publish never -c build/windows/electron-builder.js",
-    "postinstall": "npm run generate-ricardian-html",
     "pretty": "prettier --check './src/packages/**/*.{css,html,js,json,svelte,ts}'",
     "pretty:fix": "prettier --write './src/packages/**/*.{css,html,js,json,svelte,ts}'",
     "test": "npm run test:core && npm run test:preload && npm run test:main && npm run test:signer && npm run test:e2e",
