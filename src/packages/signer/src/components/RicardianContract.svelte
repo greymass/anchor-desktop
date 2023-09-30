@@ -3,6 +3,7 @@
 
     export let action
     export let abi
+    export let index: number
     export let transaction
 
     if (!action || !abi || !transaction) {
@@ -37,28 +38,41 @@
       contractContainer.innerHTML = html;
     `
 
+    const onloadScript = `window.top.postMessage({ height: document.body.scrollHeight, iframe: 'iframe-${index}' }, '*');`
+
     const ricardianTemplateParts = ricardianTemplate.split('/body>')
 
     const ricardianTemplateWithScript =
-        `${ricardianTemplateParts[0]}/body>\n<script>${ricardianScript}\n<` +
+        `${ricardianTemplateParts[0]}/body>\n<script>${ricardianScript}\n${onloadScript}\n<` +
         `/script>\n${ricardianTemplateParts[1]}`
+
+    let iframe: HTMLIFrameElement
+
+    window.addEventListener(
+        'message',
+        function (e) {
+            let message = e.data
+            if (message.iframe === `iframe-${index}` && message.height > 0) {
+                iframe.style.height = message.height + 'px'
+            }
+        },
+        false
+    )
 </script>
 
 <style lang="scss">
-    div {
-        width: 100%;
-
-        iframe {
-            max-width: 500px;
-            width: 80%;
-            margin: 0 auto 20px auto;
-            min-height: 300px;
-        }
+    iframe {
+        border: 0;
+        margin: 0;
+        height: 0;
+        width: 100vw;
     }
 </style>
 
-<div>
-    <h3>{`${action.account} - ${action.name}`}</h3>
-
-    <iframe title="" srcdoc={ricardianTemplateWithScript} sandbox="allow-scripts" />
-</div>
+<iframe
+    bind:this={iframe}
+    scrolling="no"
+    title={`iframe-${index}`}
+    srcdoc={ricardianTemplateWithScript}
+    sandbox="allow-scripts"
+/>
