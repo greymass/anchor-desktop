@@ -1,6 +1,5 @@
 <script lang="ts">
-    import {PrivateKey, Serializer, type PublicKeyType} from '@greymass/eosio'
-    import type {AnchorLinkSessionManagerSession} from '@greymass/anchor-link-session-manager'
+    import {PrivateKey, Serializer, type PublicKeyType} from '@wharfkit/antelope'
 
     import logo from '@assets/anchor-logo-lightmode.svg'
     import {sessions} from '@stores/session'
@@ -17,7 +16,7 @@
         window.anchor.exampleRequest()
     }
 
-    function removeSession(session: AnchorLinkSessionManagerSession) {
+    function removeSession(session) {
         window.anchor.sessions.remove(Serializer.objectify(session))
     }
 

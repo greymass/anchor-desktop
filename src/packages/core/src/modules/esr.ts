@@ -9,7 +9,7 @@ const log = logger.scope('esr')
 export async function handleRequest(payload: string) {
     log.debug('handleRequest', payload)
     const instance = await createSignerWindow()
-    instance?.webContents.send(events.SIGNING_REQUEST_RECEIVED, payload)
+    // instance?.webContents.send(events.SIGNING_REQUEST_RECEIVED, payload)
     instance?.show()
     activeRequest.set(payload)
 }

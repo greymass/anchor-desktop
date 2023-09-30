@@ -1,5 +1,5 @@
 import type {Writable} from 'svelte/store'
-import {Name} from '@greymass/eosio'
+import {Name} from '@wharfkit/antelope'
 
 export * from '@stores/setup'
 import {setupWritable} from '@stores/setup'

@@ -1,4 +1,4 @@
-import {derived} from 'svelte/store'
+import {derived, get} from 'svelte/store'
 import type {Readable} from 'svelte/store'
 import {protocolHandlers} from '@types'
 
@@ -10,11 +10,16 @@ import {
     Transaction,
     type ABIDef,
     type NameType,
-} from '@greymass/eosio'
-import type {AbiMap, AbiProvider, ResolvedTransaction} from 'eosio-signing-request'
+} from '@wharfkit/antelope'
+import type {AbiMap, AbiProvider, ResolvedTransaction} from '@wharfkit/signing-request'
 
-import {APIClient, TransactionHeader} from '@greymass/eosio'
-import {IdentityV2, IdentityV3, SigningRequest, ResolvedSigningRequest} from 'eosio-signing-request'
+import {APIClient, TransactionHeader} from '@wharfkit/antelope'
+import {
+    IdentityV2,
+    IdentityV3,
+    SigningRequest,
+    ResolvedSigningRequest,
+} from '@wharfkit/signing-request'
 
 // import {ChainConfig, chainConfig} from '~/config'
 import {activeAuthority, currentChainId} from '@stores/debug'
@@ -67,7 +72,7 @@ export const apiClient: Readable<APIClient | undefined> = derived(
             //     console.log('chainId for request', $currentRequest.getChainId())
             // }
             // CHANGE: Use the proper blockchain based on the chainId
-            return new APIClient({url: 'https://jungle3.greymass.com'})
+            return new APIClient({url: 'https://jungle4.greymass.com'})
         }
     }
 )
@@ -127,7 +132,7 @@ export const abiDefs: Readable<abiDefsType[]> = derived([abis], ([$abis]) => {
     return abiDefs
 })
 
-// The Identity Request ABI (not easily accessible from eosio-signing-request)
+// The Identity Request ABI (not easily accessible from @wharfkit/signing-request)
 export const identityAbi: Readable<ABI | undefined> = derived(currentRequest, ($currentRequest) => {
     if ($currentRequest) {
         const version = $currentRequest.version === 2 ? IdentityV2 : IdentityV3
@@ -153,7 +158,7 @@ export const resolvedRequest: Readable<ResolvedSigningRequest | undefined> = der
                 const resolved = $currentRequest.resolve($abis, $activeAuthority, {
                     ...header,
                     chainId: Checksum256.from(
-                        '2a02a0053e5a8cf73a56ba0fda11e4d92e0238a4a2aa74fccf46d5a910746840'
+                        '73e4385a2708e6d7048834fbc1079f2fabb17b3c125b146af438971e90716c4d'
                     ),
                 })
                 set(resolved)

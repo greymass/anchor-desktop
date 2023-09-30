@@ -2,7 +2,7 @@ import {ipcRenderer} from 'electron'
 
 import {debugPassword} from '@stores/debug'
 import events from '@types/events'
-import {Checksum256, PrivateKeyType, PublicKeyType} from '@greymass/eosio'
+import {Checksum256, PrivateKeyType, PublicKeyType} from '@wharfkit/antelope'
 
 export const signer = {
     importKey: (privateKey: PrivateKeyType, password: string = debugPassword) =>

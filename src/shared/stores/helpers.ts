@@ -1,15 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import {ABISerializableConstructor, Serializer} from '@greymass/eosio'
-import {AnchorLinkSessionManagerSession} from '@greymass/anchor-link-session-manager'
-
+import {ABISerializableConstructor, PermissionLevel, Serializer} from '@wharfkit/antelope'
 import {CoreRawValue} from '@types'
 
 export const isCore = (data: any) => data && data.constructor && data.constructor.abiName
 export const isRaw = (data: any) => data && data.type && data.object
 
 export const toCore = ({object, type}: CoreRawValue) => {
-    const customTypes: ABISerializableConstructor[] = [AnchorLinkSessionManagerSession]
+    const customTypes: ABISerializableConstructor[] = [PermissionLevel]
     return Serializer.decode({object, type, customTypes})
 }
 

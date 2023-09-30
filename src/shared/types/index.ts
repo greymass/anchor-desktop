@@ -6,7 +6,7 @@ import {
     PrivateKeyType,
     PublicKey,
     PublicKeyType,
-} from '@greymass/eosio'
+} from '@wharfkit/antelope'
 
 export interface CoreRawValue {
     object: any

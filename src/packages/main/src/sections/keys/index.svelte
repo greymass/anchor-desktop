@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {PublicKey, type PublicKeyType} from '@greymass/eosio'
+    import {PublicKey, type PublicKeyType} from '@wharfkit/antelope'
 
     import {accounts} from '@stores/accounts'
     import {privateKey} from '@stores/debug'

@@ -1,4 +1,4 @@
-import {Checksum256, Name, PermissionLevel, PublicKeyType} from '@greymass/eosio'
+import {Checksum256, Name, PermissionLevel, PublicKeyType} from '@wharfkit/antelope'
 import {Readable} from 'svelte/store'
 import {setupDerived, setupWritable} from '@stores/setup'
 
@@ -13,13 +13,13 @@ export const account: Readable<Name | undefined> = setupWritable('account', unde
 export const permission: Readable<Name | undefined> = setupWritable('permission', undefined)
 
 // TODO: The authority below is broken and needs to be fixed
-export const authority = setupDerived(
-    'authority',
-    [account, permission],
-    ([$account, $permission]) => {
-        if ($account && $permission) {
-            return PermissionLevel.from(`${$account}@${$permission}`)
-        }
-        return undefined
-    }
-)
+// export const authority = setupDerived(
+//     'authority',
+//     [account, permission],
+//     ([$account, $permission]) => {
+//         if ($account && $permission) {
+//             return PermissionLevel.from(`${$account}@${$permission}`)
+//         }
+//         return undefined
+//     }
+// )

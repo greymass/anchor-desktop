@@ -9,9 +9,40 @@
 
     import Accounts from './sections/accounts/index.svelte'
     import Keys from './sections/keys/index.svelte'
+    import Sessions from './sections/sessions/index.svelte'
     import Settings from './sections/settings/index.svelte'
     import Setup from './sections/setup/index.svelte'
 </script>
+
+{#if $initialized}
+    {#if $unlocked}
+        <div class="container">
+            <Sidebar />
+            <div class="header">
+                <HeaderBar />
+            </div>
+            <div class="content">
+                <Route path="/" />
+                <Route path="/accounts/*">
+                    <Accounts />
+                </Route>
+                <Route path="/keys">
+                    <Keys />
+                </Route>
+                <Route path="/sessions">
+                    <Sessions />
+                </Route>
+                <Route path="/settings">
+                    <Settings />
+                </Route>
+            </div>
+        </div>
+    {:else}
+        <LockScreen />
+    {/if}
+{:else}
+    <Setup />
+{/if}
 
 <style lang="scss" global>
     $grid_gap: 1em;
@@ -73,30 +104,3 @@
         }
     }
 </style>
-
-{#if $initialized}
-    {#if $unlocked}
-        <div class="container">
-            <Sidebar />
-            <div class="header">
-                <HeaderBar />
-            </div>
-            <div class="content">
-                <Route path="/" />
-                <Route path="/accounts/*">
-                    <Accounts />
-                </Route>
-                <Route path="/keys">
-                    <Keys />
-                </Route>
-                <Route path="/settings">
-                    <Settings />
-                </Route>
-            </div>
-        </div>
-    {:else}
-        <LockScreen />
-    {/if}
-{:else}
-    <Setup />
-{/if}

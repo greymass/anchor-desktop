@@ -1,5 +1,5 @@
 import {ipcMain, IpcMainInvokeEvent} from 'electron'
-import {Checksum256, PrivateKey, PrivateKeyType, PublicKey, PublicKeyType} from '@greymass/eosio'
+import {Checksum256, PrivateKey, PrivateKeyType, PublicKey, PublicKeyType} from '@wharfkit/antelope'
 
 import {KeyStore} from '@types'
 import events from '@types/events'

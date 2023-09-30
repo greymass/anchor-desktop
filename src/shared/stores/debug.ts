@@ -1,10 +1,10 @@
-import {Checksum256, PermissionLevel, PrivateKey} from '@greymass/eosio'
+import {Checksum256, PermissionLevel, PrivateKey} from '@wharfkit/antelope'
 import {Writable} from 'svelte/store'
 import {setupWritable} from '@stores/setup'
 
 export const currentChainId: Writable<Checksum256> = setupWritable(
     'currentChainId',
-    Checksum256.from('2a02a0053e5a8cf73a56ba0fda11e4d92e0238a4a2aa74fccf46d5a910746840')
+    Checksum256.from('73e4385a2708e6d7048834fbc1079f2fabb17b3c125b146af438971e90716c4d')
 )
 
 export const activeAuthority: Writable<PermissionLevel> = setupWritable(

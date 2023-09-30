@@ -33,6 +33,7 @@ export class Storage {
         log.info('Started', options, this.store.size, this.store.path)
     }
     set = (key: string, value: unknown) => {
+        logger.debug(key, value)
         this.store.set(key, value)
     }
     get = (key: string, defaultValue?: unknown) => {

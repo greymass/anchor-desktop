@@ -11,7 +11,7 @@ import {log as logger} from '~/modules/log'
 import {createMainWindow} from '~/windows/main'
 import {disableProtocolHandlers, enableProtocolHandlers} from '~/modules/protocols'
 import {enableSigner} from '~/modules/signer'
-import {enableSocket} from '~/modules/socket'
+import {enableSocket} from '~/modules/buoy'
 
 const log = logger.scope('core')
 
