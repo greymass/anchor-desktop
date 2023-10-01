@@ -45,6 +45,11 @@
 {/if}
 
 <style lang="scss" global>
+    // Utilities
+    @import '../../../shared/styles/global.scss';
+    @import '../../../shared/styles/font.scss';
+    @import '../../../shared/styles/colors.scss';
+
     $grid_gap: 1em;
     $navigation_width: 120px;
     $menubar_height: 78px;

@@ -1,4 +1,9 @@
+<script>
+    import logo from '@assets/anchor-logo-lightmode.svg'
+</script>
+
 <div class="sidebar">
+    <img src={logo} />
     <ul>
         <li>
             <a href="/">Home</a>
@@ -20,10 +25,23 @@
 
 <style lang="scss">
     .sidebar {
-        background-color: white;
         min-height: 100vh;
         grid-area: leftbar;
         position: fixed;
         left: 0;
+        img {
+            width: 35px;
+            padding: 20px;
+        }
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0 20px;
+            li {
+                padding: 10px;
+                a {
+                }
+            }
+        }
     }
 </style>

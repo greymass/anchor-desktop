@@ -20,7 +20,7 @@ import events from '@types/events'
 
 import {handleRequest} from '~/modules/esr'
 import {log as logger} from '~/modules/log'
-import {BuoySession, BuoySessionType, SealedMessage} from '~/modules/session'
+import {BuoySession, BuoySessionType, SealedMessage} from '~/modules/buoy/session'
 import {storage} from '~/modules/storage'
 
 const log = logger.scope('buoy')
@@ -115,7 +115,9 @@ export default class BuoyService {
         // Retrieve Sessions from storage
         const sessionStorage = this.getSessions()
         // Check if the session already exists
-        const existingIndex = sessionStorage.findIndex((s: BuoySession) => s.equals(session))
+        const existingIndex = sessionStorage.findIndex((s: BuoySessionType) =>
+            BuoySession.from(s).equals(session)
+        )
         if (existingIndex >= 0) {
             // Update the existing session
             sessionStorage.splice(existingIndex, 1, session)
@@ -134,7 +136,7 @@ export default class BuoyService {
         // Retrieve Sessions from storage
         const sessionStorage = this.getSessions()
         // Filter out the session to remove
-        sessionStorage.filter((s: BuoySession) => !s.equals(data))
+        sessionStorage.filter((s: BuoySessionType) => !BuoySession.from(s).equals(data))
         // Update storage
         storage.set('sessions', sessionStorage)
         // Update svelte store
