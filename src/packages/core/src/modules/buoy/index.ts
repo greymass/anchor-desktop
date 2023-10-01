@@ -1,58 +1,50 @@
-import {Bytes, Checksum512, PrivateKey, PublicKey, Serializer, UInt64} from '@wharfkit/antelope'
+import {
+    Bytes,
+    Checksum512,
+    PrivateKey,
+    PublicKey,
+    Serializer,
+    TimePointSec,
+    UInt64,
+} from '@wharfkit/antelope'
 import {Listener, ListenerEncoding} from '@greymass/buoy'
 import {AES_CBC} from 'asmcrypto.js'
-import fetch from 'node-fetch'
 import {ipcMain} from 'electron'
 import WebSocket from 'ws'
 import crypto from 'crypto'
 
 import {sessions} from '@stores/session'
+
 import {IdentityRequestParams, SessionParams} from '@types'
 import events from '@types/events'
-import {log as logger} from '~/modules/log'
-import {storage} from '~/modules/storage'
-import {handleRequest} from './esr'
-import {BuoySession, SealedMessage} from './session'
-import {get} from 'svelte/store'
-import {activeRequest} from '@stores/request'
-import {createSignerWindow} from '../../../../core/src/windows/signer'
 
-const log = logger.scope('socket')
+import {handleRequest} from '~/modules/esr'
+import {log as logger} from '~/modules/log'
+import {BuoySession, BuoySessionType, SealedMessage} from '~/modules/session'
+import {storage} from '~/modules/storage'
+
+const log = logger.scope('buoy')
 
 export default class BuoyService {
     listener: Listener
-    // manager: AnchorLinkSessionManager
-    // storage: AnchorLinkSessionManagerStorage
-    // handler: AnchorLinkSessionManagerEventHander
 
     constructor() {
-        log.info('Starting buoy socket...')
-
-        this.setupListener()
-        // this.handler = this.createHandler()
-        // const config = this.getConfig()
-        // sessions.set(config.sessions)
-        // this.storage = new AnchorLinkSessionManagerStorage(config)
-        // this.manager = new AnchorLinkSessionManager({
-        //     handler: this.handler,
-        //     storage: this.storage,
-        //     WebSocket,
-        // })
-    }
-    setupListener() {
+        log.info('Starting Buoy service...')
         const config = this.getConfig()
-        logger.debug('setup listener...', config)
-        const service = 'https://cb.anchor.link'
-
-        const options = {channel: config.linkId, service, fetch, WebSocket}
         this.listener = new Listener({
-            ...options,
-            encoding: ListenerEncoding.binary,
             autoConnect: true,
+            channel: config.linkId,
+            service: config.linkUrl,
+            encoding: ListenerEncoding.binary,
+            WebSocket,
         })
+        this.setupEventHandlers()
+    }
 
+    setupEventHandlers() {
         this.listener.on('message', (data) => this.handleMessage(data))
     }
+
     async handleMessage(data: Buffer) {
         logger.debug('handleMessage', data.toString('hex'))
         const config = this.getConfig()
@@ -61,7 +53,6 @@ export default class BuoyService {
             type: SealedMessage,
             data,
         })
-        console.log('message', message)
 
         // Unseal the message using the session managers request key
         const unsealed = unsealMessage(
@@ -71,36 +62,30 @@ export default class BuoyService {
             message.nonce
         )
 
-        console.log('unsealed', unsealed)
-
         // Ensure an active session for this key exists in storage
         const sessionStorage: BuoySession[] = storage.get('sessions')
-        const recognized = sessionStorage.find((s) => message.from.equals(s.publicKey))
-        if (!recognized) {
+        const session = sessionStorage.find((s) => message.from.equals(s.publicKey))
+        if (!session) {
             throw new Error(`Unknown session using ${message.from}`)
         }
 
         // Updating session lastUsed timestamp
-        // this.updateLastUsed(message.from)
+        session.updateLastUsed(TimePointSec.fromDate(new Date()))
 
-        // Fire callback for onIncomingRequest defined by client application
-        // this.handler.onIncomingRequest(unsealed)
-
-        const instance = await createSignerWindow()
-        // instance?.webContents.send(events.SIGNING_REQUEST_RECEIVED, payload)
-        instance?.show()
-        activeRequest.set(unsealed)
+        // Create the signer window and pass the data
+        handleRequest(unsealed)
 
         // Return the unsealed message
         return unsealed
     }
+
     getConfig() {
         let config = storage.get('connections')
         if (config) {
             log.debug('Using existing configuration:', config)
         } else {
             config = {
-                linkUrl: 'cb.anchor.link',
+                linkUrl: 'https://cb.anchor.link',
                 sessions: [],
                 linkId: crypto.randomUUID(),
                 requestKey: String(PrivateKey.generate('K1')),
@@ -110,68 +95,64 @@ export default class BuoyService {
         }
         return config
     }
-    getSessions() {
-        return storage.get('sessions') || []
-    }
-    addSession(request: IdentityRequestParams) {
+
+    addSessionFromIdentity(request: IdentityRequestParams) {
         log.debug('Adding new session', request)
-        const sessionStorage = this.getSessions()
+        // Create the new session from the identity request
         const session = BuoySession.fromIdentityRequest(
             request.network,
             request.actor,
             request.permission,
             request.payload
         )
-        const existingIndex = sessionStorage.findIndex((s) => {
-            const matchingNetwork = session.network.equals(s.network)
-            const matchingActor = session.actor.equals(s.actor)
-            const matchingPermissions = session.permission.equals(s.permission)
-            const matchingAppName = session.name.equals(s.name)
-            return matchingNetwork && matchingActor && matchingPermissions && matchingAppName
-        })
+        // Now add the Session
+        this.addSession(session)
+    }
+
+    addSession(data: BuoySessionType) {
+        const session = BuoySession.from(data)
+        log.debug('Adding new session', session)
+        // Retrieve Sessions from storage
+        const sessionStorage = this.getSessions()
+        // Check if the session already exists
+        const existingIndex = sessionStorage.findIndex((s: BuoySession) => s.equals(session))
         if (existingIndex >= 0) {
+            // Update the existing session
             sessionStorage.splice(existingIndex, 1, session)
         } else {
+            // Add the new session
             sessionStorage.push(session)
         }
-        logger.debug('sessions', sessions)
+        // Update storage
         storage.set('sessions', sessionStorage)
+        // Update svelte store
         sessions.set(sessionStorage)
     }
+
     removeSession(data: SessionParams) {
         log.debug('Removing existing session', data)
-        // const session = AnchorLinkSessionManagerSession.from({
-        //     network: data.network,
-        //     actor: data.actor,
-        //     permission: data.permission,
-        //     publicKey: data.publicKey,
-        //     name: data.name,
-        // })
-        // this.manager.removeSession(session)
+        // Retrieve Sessions from storage
+        const sessionStorage = this.getSessions()
+        // Filter out the session to remove
+        sessionStorage.filter((s: BuoySession) => !s.equals(data))
+        // Update storage
+        storage.set('sessions', sessionStorage)
+        // Update svelte store
+        sessions.set(sessionStorage)
     }
-    // createHandler() {
-    //     return {
-    //         onStorageUpdate(json: string) {
-    //             log.debug('Called onStorageUpdate', json, storage)
-    //             const data = JSON.parse(json)
-    //             storage.set('connections', data)
-    //             sessions.set(data.sessions)
-    //         },
-    //         onIncomingRequest(payload: string) {
-    //             log.debug('Called onIncomingRequest', payload)
-    //             handleRequest(payload)
-    //         },
-    //     }
-    // }
+
+    getSessions() {
+        return storage.get('sessions') || []
+    }
 }
 
 export const enableSocket = () => {
     // Create new Session Manager
     const service = new BuoyService()
-    // Connect the session manager
-    // service.manager.connect()
     // Establish IBC events
-    ipcMain.on(events.SESSION_ADD, (e: unknown, args) => service.addSession(args))
+    ipcMain.on(events.SESSION_ADD_IDENTITY, (e: unknown, args) =>
+        service.addSessionFromIdentity(args)
+    )
     ipcMain.on(events.SESSION_REMOVE, (e: unknown, args) => service.removeSession(args))
     // Request for configuration
     ipcMain.handle(events.SESSION_CONFIG, async () => {
@@ -182,11 +163,9 @@ export const enableSocket = () => {
             requestKey: String(PrivateKey.from(requestKey).toPublic()),
         }
     })
-    logger.debug(service.getSessions())
+    // Update the svelte store
     sessions.set(service.getSessions())
-    console.log('sessions', get(sessions))
 }
-// return service
 
 /**
  * Encrypt a message using AES and shared secret derived from given keys.

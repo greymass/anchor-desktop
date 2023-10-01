@@ -52,7 +52,7 @@
                                 link_name: 'Anchor Desktop',
                             }
                             // console.log(callbackParams)
-                            const session: IdentityRequestParams = {
+                            const identity: IdentityRequestParams = {
                                 network:
                                     '73e4385a2708e6d7048834fbc1079f2fabb17b3c125b146af438971e90716c4d',
                                 actor: callbackParams.payload.sa,
@@ -61,7 +61,7 @@
                             }
                             // console.log(session)
                             // console.log(window.anchor)
-                            window.anchor.sessions.add(session)
+                            window.anchor.sessions.addFromIdentity(identity)
 
                             // Perform the callback
 

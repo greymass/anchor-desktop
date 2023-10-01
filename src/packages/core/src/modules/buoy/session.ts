@@ -9,6 +9,8 @@ import {
     Struct,
     UInt32,
     UInt64,
+    TimePointSec,
+    TimePointType,
 } from '@wharfkit/antelope'
 import {SigningRequest} from '@wharfkit/signing-request'
 import zlib from 'pako'
@@ -39,34 +41,41 @@ export interface IdentityRequestOptions {
     zlib?: ZlibProvider
 }
 
-export class BuoySession {
-    public actor!: Name
-    public permission!: Name
-    public name!: Name
-    public network!: Checksum256
-    public publicKey!: PublicKey
-    public created!: number
-    public lastUsed!: number
+export type BuoySessionType =
+    | BuoySession
+    | {
+          network: Checksum256Type
+          actor: NameType
+          permission: NameType
+          publicKey: PublicKeyType
+          name: NameType
+          created: TimePointType
+          lastUsed: TimePointType
+      }
 
-    constructor(
-        network: Checksum256Type,
-        actor: NameType,
-        permission: NameType,
-        publicKey: PublicKeyType,
-        name: NameType,
-        created?: number,
-        lastUsed?: number
-    ) {
-        this.network = Checksum256.from(network)
-        this.actor = Name.from(actor)
-        this.permission = Name.from(permission)
-        this.publicKey = PublicKey.from(publicKey)
-        this.name = Name.from(name)
-        this.created = created || Date.now()
-        this.lastUsed = lastUsed || Date.now()
+@Struct.type('buoy_session')
+export class BuoySession extends Struct {
+    @Struct.field(Name) actor!: Name
+    @Struct.field(Name) permission!: Name
+    @Struct.field(Name) name!: Name
+    @Struct.field(Checksum256) network!: Checksum256
+    @Struct.field(PublicKey) publicKey!: PublicKey
+    @Struct.field(TimePointSec) created!: TimePointSec
+    @Struct.field(TimePointSec) lastUsed!: TimePointSec
+
+    static from(session: BuoySessionType): BuoySession {
+        return new this({
+            network: Checksum256.from(session.network),
+            actor: Name.from(session.actor),
+            permission: Name.from(session.permission),
+            publicKey: PublicKey.from(session.publicKey),
+            name: Name.from(session.name),
+            created: session.created,
+            lastUsed: session.lastUsed,
+        }) as BuoySession
     }
 
-    updateLastUsed(time: number) {
+    updateLastUsed(time: TimePointSec) {
         this.lastUsed = time
     }
 
@@ -93,12 +102,24 @@ export class BuoySession {
             throw new Error('identity request does not contain link information')
         }
 
-        return new BuoySession(
-            String(network),
+        return super.from({
+            network,
             actor,
             permission,
-            String(linkInfo['request_key']),
-            String(linkInfo['session_name'])
+            publicKey: String(linkInfo['request_key']),
+            name: String(linkInfo['session_name']),
+            created: TimePointSec.fromDate(new Date()),
+            lastUsed: TimePointSec.fromDate(new Date()),
+        }) as BuoySession
+    }
+
+    equals(other: BuoySessionType) {
+        const otherSession = BuoySession.from(other)
+        return (
+            this.network.equals(otherSession.network) &&
+            this.actor.equals(otherSession.actor) &&
+            this.permission.equals(otherSession.permission) &&
+            this.name.equals(otherSession.name)
         )
     }
 

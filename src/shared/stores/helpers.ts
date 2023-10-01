@@ -3,11 +3,13 @@
 import {ABISerializableConstructor, PermissionLevel, Serializer} from '@wharfkit/antelope'
 import {CoreRawValue} from '@types'
 
+import {BuoySession} from '../../packages/core/src/modules/buoy/session'
+
 export const isCore = (data: any) => data && data.constructor && data.constructor.abiName
 export const isRaw = (data: any) => data && data.type && data.object
 
 export const toCore = ({object, type}: CoreRawValue) => {
-    const customTypes: ABISerializableConstructor[] = [PermissionLevel]
+    const customTypes: ABISerializableConstructor[] = [BuoySession, PermissionLevel]
     return Serializer.decode({object, type, customTypes})
 }
 
